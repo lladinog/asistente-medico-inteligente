@@ -1,0 +1,1 @@
+# Módulo de procesamiento de imágenes y visión por computadora 

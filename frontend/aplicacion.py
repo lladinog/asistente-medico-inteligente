@@ -78,7 +78,7 @@ def create_header():
                 ], width=4)
             ], align="center")
         ], fluid=True)
-    ], color=COLORS['white'], light=True, className="mb-4 shadow-sm")
+    ], color=COLORS['white'], className="mb-4 shadow-sm")
 
 def create_function_card(title, description, icon, color, card_id):
     return dbc.Card([
@@ -1299,4 +1299,4 @@ app.index_string = '''
 '''
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8050)
+    app.run(debug=True, host="127.0.0.1", port=8050)
