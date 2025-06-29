@@ -5,23 +5,20 @@ Este directorio contiene scripts para configurar automáticamente el **Asistente
 ## 📋 Scripts Disponibles
 
 ### 🪟 Windows
-- **`setup_windows.bat`** - Setup completo para Windows
+- **`setup.bat`** - Setup completo para Windows
 - **`run_app.bat`** - Ejecución rápida de la aplicación
 
-### 🐧 Linux
-- **`setup_linux.sh`** - Setup completo para Linux
+### 🐧 Linux y 🍎 macOS
+- **`setup.sh`** - Setup completo para Linux y macOS
 - **`run_app.sh`** - Ejecución rápida de la aplicación
 
-### 🍎 macOS
-- **`setup_macos.sh`** - Setup completo para macOS
-- **`run_app.sh`** - Ejecución rápida de la aplicación
 
 ## 🚀 Instalación Rápida
 
 ### Windows
 ```bash
 # Ejecutar setup automático
-setup_windows.bat
+setup.bat
 
 # Ejecutar aplicación
 run_app.bat
@@ -30,13 +27,10 @@ run_app.bat
 ### Linux/macOS
 ```bash
 # Dar permisos de ejecución
-chmod +x setup_linux.sh setup_macos.sh run_app.sh
+chmod +x setup.sh run_app.sh
 
 # Ejecutar setup automático (Linux)
-./setup_linux.sh
-
-# Ejecutar setup automático (macOS)
-./setup_macos.sh
+./setup.sh
 
 # Ejecutar aplicación
 ./run_app.sh
