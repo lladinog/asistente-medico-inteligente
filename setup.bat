@@ -18,7 +18,7 @@ if errorlevel 1 (
 )
 
 :: Verificar versión de Python
-for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
+for /f "tokens=2 delims= " %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
 echo ✅ Python encontrado: %PYTHON_VERSION%
 
 :: Verificar si pip está disponible
@@ -29,13 +29,15 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+echo ✅ pip encontrado
 
 :: Crear directorio de logs si no existe
 if not exist "logs" mkdir logs
 
 :: Verificar si ya existe un entorno virtual
+echo 🔍 Verificando si ya existe un entorno virtual
 if exist "venv" (
-    echo Ya existe un entorno virtual. ¿Deseas recrearlo? (S/N) :
+    echo Ya existe un entorno virtual. ¿Deseas recrearlo? (S/N^)
     set /p RECREATE=
     if /i "%RECREATE%"=="S" (
         echo 🗑️  Eliminando entorno virtual existente...
@@ -50,7 +52,7 @@ echo.
 echo 🔧 Creando entorno virtual...
 python -m venv venv
 if errorlevel 1 (
-    echo ❌ ERROR: No se pudo crear el entorno virtual
+    echo ERROR: No se pudo crear el entorno virtual
     pause
     exit /b 1
 )
@@ -60,7 +62,7 @@ echo.
 echo 🔄 Activando entorno virtual...
 call venv\Scripts\activate
 if errorlevel 1 (
-    echo ❌ ERROR: No se pudo activar el entorno virtual
+    echo ERROR: No se pudo activar el entorno virtual
     pause
     exit /b 1
 )
@@ -73,7 +75,7 @@ echo.
 echo 📦 Instalando dependencias...
 pip install -r requirements.txt
 if errorlevel 1 (
-    echo ❌ ERROR: No se pudieron instalar las dependencias
+    echo ERROR: No se pudieron instalar las dependencias
     echo Verifica tu conexión a internet y el archivo requirements.txt
     pause
     exit /b 1
@@ -84,9 +86,9 @@ echo ⚙️  Configurando el proyecto...
 
 :: Crear archivo de configuración si no existe
 if not exist "config.py" (
-    echo 📝 Creando archivo de configuración...
+    echo Creando archivo de configuración...
     copy config.example.py config.py
-    echo ⚠️  IMPORTANTE: Edita config.py y añade tu API key de OpenAI
+    echo IMPORTANTE: Edita config.py y añade tu API key de OpenAI
 )
 
 :: Crear archivo .env si no existe
@@ -97,7 +99,7 @@ if not exist ".env" (
     echo DEBUG=True >> .env
     echo HOST=127.0.0.1 >> .env
     echo PORT=8050 >> .env
-    echo ⚠️  IMPORTANTE: Edita .env y añade tu API key de OpenAI
+    echo  IMPORTANTE: Edita .env y añade tu API key de OpenAI
 )
 
 echo.
