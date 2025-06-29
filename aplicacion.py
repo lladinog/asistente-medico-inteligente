@@ -8,6 +8,7 @@ import base64
 import io
 from datetime import datetime
 import json
+from modelos.diagnostico import FreeMedicalDiagnosisSystem
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = "Asistente Médico Rural"
@@ -270,55 +271,38 @@ def create_diagnostico_content():
     return html.Div([
         dbc.Alert([
             html.I(className="fas fa-info-circle me-2"),
-            "Describe tus síntomas con el mayor detalle posible. Este diagnóstico es preliminar y no reemplaza una consulta médica."
+            "Describe tus síntomas con detalle. Este diagnóstico es preliminar y no reemplaza una consulta médica."
         ], color="info", className="mb-3"),
         
-        dbc.Form([
-            dbc.Row([
-                dbc.Col([
-                    dbc.Label("Edad", html_for="edad-input"),
-                    dbc.Input(id="edad-input", type="number", placeholder="Ej: 35", min=1, max=120)
-                ], width=6),
-                dbc.Col([
-                    dbc.Label("Sexo", html_for="sexo-select"),
-                    dbc.Select(id="sexo-select", options=[
-                        {"label": "Masculino", "value": "M"},
-                        {"label": "Femenino", "value": "F"},
-                        {"label": "Prefiero no decir", "value": "N"}
-                    ])
-                ], width=6)
-            ], className="mb-3"),
-            
-            dbc.Row([
-                dbc.Col([
-                    dbc.Label("Describe tus síntomas principales", html_for="sintomas-textarea"),
-                    dbc.Textarea(id="sintomas-textarea", 
-                               placeholder="Ej: Tengo dolor de cabeza fuerte desde hace 2 días, fiebre de 38°C, y me duele la garganta al tragar...",
-                               rows=4, className="mb-3")
-                ], width=12)
-            ]),
-            
-            dbc.Row([
-                dbc.Col([
-                    dbc.Label("¿Cuánto tiempo llevas con estos síntomas?", html_for="tiempo-select"),
-                    dbc.Select(id="tiempo-select", options=[
-                        {"label": "Menos de 24 horas", "value": "24h"},
-                        {"label": "1-3 días", "value": "3d"},
-                        {"label": "1 semana", "value": "1w"},
-                        {"label": "Más de 1 semana", "value": "1w+"}
-                    ])
-                ], width=6),
-                dbc.Col([
-                    dbc.Label("Intensidad del malestar (1-10)", html_for="intensidad-slider"),
-                    dcc.Slider(id="intensidad-slider", min=1, max=10, step=1, value=5, 
-                             marks={i: str(i) for i in range(1, 11)})
-                ], width=6)
-            ], className="mb-3"),
-            
-            dbc.Button("Analizar Síntomas", color="primary", size="lg", className="w-100", id="btn-analizar-sintomas"),
-            
-            html.Div(id="resultado-diagnostico", className="mt-4")
-        ])
+        # Historial del chat
+        html.Div(id="chat-history", style={
+            'height': '400px',
+            'overflowY': 'auto',
+            'border': '1px solid #ddd',
+            'borderRadius': '10px',
+            'padding': '15px',
+            'marginBottom': '15px',
+            'backgroundColor': '#f9f9f9'
+        }),
+        
+        # Área de entrada
+        dbc.InputGroup([
+            dbc.Textarea(
+                id="symptom-input",
+                placeholder="Describe tus síntomas aquí... Ej: Tengo dolor de cabeza fuerte desde hace 2 días con fiebre...",
+                rows=3,
+                style={'borderRadius': '15px', 'borderTopRightRadius': '0', 'borderBottomRightRadius': '0'}
+            ),
+            dbc.Button(
+                html.I(className="fas fa-paper-plane"),
+                id="send-symptoms",
+                color="primary",
+                style={'borderRadius': '15px', 'borderTopLeftRadius': '0', 'borderBottomLeftRadius': '0'}
+            )
+        ], className="mb-3"),
+        
+        # Resultados del diagnóstico
+        html.Div(id="diagnosis-result", className="mt-4")
     ])
 
 def create_imagenes_content():
@@ -543,7 +527,8 @@ def buscar_centros_con_mapa(n_clicks, departamento, especialidad):
     
     if not centros:
         return dbc.Alert("No se encontraron centros médicos con los criterios especificados.", color="warning"), ""
-    
+
+
     # Crear mapa
     mapa_html = f"""
     <div id="mapa-leaflet" style="height: 400px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>
@@ -1247,6 +1232,63 @@ def simular_envio_medico(n_clicks, metodos):
     ])
     
     return seguimiento, "tab-estado"
+
+# Callbacks para el chat de diagnóstico
+@app.callback(
+    [Output("chat-history", "children"),
+     Output("diagnosis-result", "children"),
+     Output("symptom-input", "value")],
+    [Input("send-symptoms", "n_clicks")],
+    [State("symptom-input", "value"),
+    State("chat-history", "children")]
+)
+def handle_chat(n_clicks, user_input, chat_history):
+    if not n_clicks or not user_input:
+        return no_update, no_update, no_update
+    
+    # Crear instancia del sistema de diagnóstico
+    medical_system = FreeMedicalDiagnosisSystem()
+    
+    # Obtener respuesta del sistema
+    diagnosis_response = medical_system.chat_diagnosis(user_input)
+    
+    # Crear elementos del chat
+    user_message = html.Div([
+        html.Div([
+            html.Span("Tú", style={'fontWeight': 'bold', 'color': COLORS['primary']}),
+            html.Div(user_input, style={
+                'backgroundColor': COLORS['light_blue'],
+                'padding': '10px',
+                'borderRadius': '10px',
+                'margin': '5px 0'
+            })
+        ], style={'textAlign': 'right', 'marginLeft': '50px'})
+    ])
+    
+    bot_message = html.Div([
+        html.Div([
+            html.Span("Asistente Médico", style={'fontWeight': 'bold', 'color': COLORS['success']}),
+            dcc.Markdown(diagnosis_response, style={
+                'backgroundColor': COLORS['white'],
+                'padding': '10px',
+                'borderRadius': '10px',
+                'margin': '5px 0',
+                'border': '1px solid #eee'
+            })
+        ], style={'textAlign': 'left', 'marginRight': '50px'})
+    ])
+    
+    # Actualizar historial del chat
+    if chat_history is None:
+        chat_history = []
+    else:
+        chat_history = chat_history.copy()
+    
+    chat_history.extend([user_message, bot_message])
+    
+    # Limpiar el área de entrada
+    return chat_history, "", ""
+
 
 app.index_string = '''
 <!DOCTYPE html>
