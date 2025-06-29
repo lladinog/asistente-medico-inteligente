@@ -91,6 +91,35 @@ def create_main_layout():
             ])
         ], id="main-modal", is_open=False, size="xl"),
         
+        # Sección de información del sistema médico
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardBody([
+                        html.Div([
+                            html.H4([
+                                html.I(className="fas fa-brain me-2"),
+                                "Sistema de Diagnóstico Médico Avanzado"
+                            ], style={'color': COLORS['primary'], 'textAlign': 'center', 'marginBottom': '15px'}),
+                            html.P([
+                                "Nuestro sistema utiliza inteligencia artificial y una base de conocimiento médico completa ",
+                                "para proporcionar diagnósticos preliminares precisos y recomendaciones personalizadas. ",
+                                "Diseñado específicamente para comunidades rurales con acceso limitado a servicios médicos."
+                            ], style={'textAlign': 'center', 'fontSize': '1rem', 'color': COLORS['text'], 'marginBottom': '20px'}),
+                            dbc.Button([
+                                html.I(className="fas fa-info-circle me-2"),
+                                "Conocer Más Sobre el Sistema"
+                            ], color="info", size="lg", id="btn-info-sistema", 
+                            style={'borderRadius': '25px', 'fontWeight': 'bold'})
+                        ], style={'textAlign': 'center'})
+                    ])
+                ], style={'backgroundColor': COLORS['light_blue'], 'borderRadius': '15px'})
+            ], width=12, className="mb-4")
+        ]),
+        
+        # Contenedor para información del sistema
+        html.Div(id="sistema-medico-info"),
+        
         # Footer
         html.Hr(style={'marginTop': '50px'}),
         dbc.Row([

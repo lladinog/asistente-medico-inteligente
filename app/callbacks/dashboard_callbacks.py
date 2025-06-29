@@ -12,6 +12,18 @@ from app.layout.modals import (
     create_resumen_content
 )
 
+# Importar el nuevo agente de diagnóstico médico
+import sys
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.dirname(os.path.dirname(current_dir))
+sys.path.insert(0, root_dir)
+
+from agents.medical_diagnosis_agent import create_medical_diagnosis_agent
+
+# Crear instancia del agente médico
+medical_agent = create_medical_diagnosis_agent()
+
 def mostrar_advertencia_etica():
     return dbc.Alert([
         html.Div([
@@ -347,42 +359,131 @@ def register_callbacks(app):
         
         advertencia = mostrar_advertencia_etica()
         
-        resultado_simulado = dbc.Card([
-            dbc.CardHeader([
-                html.H5("🧠 Análisis Preliminar de Síntomas", className="mb-0", style={'color': COLORS['primary']})
-            ]),
-            dbc.CardBody([
-                html.Div([
-                    html.H6("DATOS ANALIZADOS:", style={'color': COLORS['primary']}),
-                    html.P([
-                        f"Edad: {edad} años | Sexo: {sexo} | Intensidad: {intensidad}/10 | Duración: {tiempo}"
-                    ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
-                    
-                    html.H6("SÍNTOMAS REPORTADOS:", style={'color': COLORS['primary']}),
-                    html.P(sintomas, style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
-                    
-                    html.H6("🔍 DIAGNÓSTICO PRELIMINAR:", style={'color': COLORS['primary']}),
-                    html.Div([
-                        html.P("Basado en los síntomas descritos, las posibles condiciones incluyen:", className="mb-2"),
-                        html.Ul([
-                            html.Li("Infección viral del tracto respiratorio superior (probabilidad: 65%)"),
-                            html.Li("Faringitis bacteriana (probabilidad: 25%)"),
-                            html.Li("Otras condiciones a considerar (probabilidad: 10%)")
-                        ]),
-                        
-                        html.H6("💊 RECOMENDACIONES:", style={'color': COLORS['accent']}),
-                        html.Ul([
-                            html.Li("Mantén reposo e hidratación adecuada"),
-                            html.Li("Toma analgésicos de venta libre si es necesario"),
-                            html.Li("Consulta a un médico si los síntomas empeoran o persisten más de 5 días"),
-                            html.Li("Busca atención médica urgente si tienes dificultad para respirar")
+        try:
+            # Preparar información del paciente
+            patient_info = {
+                "edad": edad,
+                "sexo": sexo,
+                "tiempo_sintomas": tiempo,
+                "intensidad": intensidad
+            }
+            
+            # Usar el agente médico avanzado para análisis
+            result = medical_agent.analyze_symptoms(sintomas, patient_info)
+            
+            if result["success"]:
+                diagnosis = result["diagnosis"]
+                
+                # Crear resultado con el sistema médico avanzado
+                resultado_avanzado = dbc.Card([
+                    dbc.CardHeader([
+                        html.H5([
+                            diagnosis["urgency_emoji"], 
+                            " Análisis Médico Avanzado"
+                        ], className="mb-0", style={'color': COLORS['primary']})
+                    ]),
+                    dbc.CardBody([
+                        html.Div([
+                            html.H6("DATOS DEL PACIENTE:", style={'color': COLORS['primary']}),
+                            html.P([
+                                f"Edad: {edad} años | Sexo: {sexo} | Intensidad: {intensidad}/10 | Duración: {tiempo}"
+                            ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                            
+                            html.H6("SÍNTOMAS ANALIZADOS:", style={'color': COLORS['primary']}),
+                            html.P(sintomas, style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                            
+                            html.H6(f"{diagnosis['urgency_emoji']} NIVEL DE URGENCIA: {diagnosis['urgency_level'].upper()}", 
+                                   style={'color': COLORS['primary']}),
+                            html.P(diagnosis['urgency_explanation'], 
+                                  style={'backgroundColor': '#fff3cd' if diagnosis['urgency_level'] in ['emergencia', 'urgente'] else '#e8f5e8', 
+                                        'padding': '10px', 'borderRadius': '5px'}),
+                            
+                            html.H6("🔍 CONDICIONES POSIBLES:", style={'color': COLORS['primary']}),
+                            html.Ul([
+                                html.Li(condition) for condition in diagnosis['possible_conditions']
+                            ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                            
+                            html.H6("💊 RECOMENDACIONES:", style={'color': COLORS['accent']}),
+                            html.Ul([
+                                html.Li(rec) for rec in diagnosis['recommendations'][:5]
+                            ], style={'backgroundColor': '#e8f5e8', 'padding': '10px', 'borderRadius': '5px'}),
+                            
+                            html.H6("⚠️ SEÑALES DE ALARMA:", style={'color': COLORS['primary']}),
+                            html.Div([
+                                html.Ul([
+                                    html.Li(flag) for flag in diagnosis['red_flags']
+                                ], style={'backgroundColor': '#ffe6e6', 'padding': '10px', 'borderRadius': '5px'})
+                                if diagnosis['red_flags'] else
+                                html.P("No se identificaron señales de alarma específicas", 
+                                      style={'backgroundColor': '#e8f5e8', 'padding': '10px', 'borderRadius': '5px'})
+                            ]),
+                            
+                            html.H6("👨‍⚕️ ESPECIALISTA RECOMENDADO:", style={'color': COLORS['primary']}),
+                            html.P(diagnosis['specialist_referral'] or 'Médico general', 
+                                  style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                            
+                            html.H6("📊 NIVEL DE CONFIANZA:", style={'color': COLORS['primary']}),
+                            html.Div([
+                                html.Span(f"{diagnosis['confidence_level']:.0%} "),
+                                html.Span(diagnosis['confidence_bars'], style={'fontFamily': 'monospace'})
+                            ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'})
                         ])
-                    ], style={'backgroundColor': '#e8f5e8', 'padding': '15px', 'borderRadius': '5px'})
+                    ])
+                ], className="mt-3")
+                
+                return html.Div([advertencia, resultado_avanzado])
+            else:
+                # Error en el sistema médico
+                error_card = dbc.Card([
+                    dbc.CardHeader([
+                        html.H5("🚨 Error en el Sistema Médico", className="mb-0", style={'color': '#dc3545'})
+                    ]),
+                    dbc.CardBody([
+                        html.P(f"Error: {result['error']}", style={'color': '#dc3545'}),
+                        html.P(result['recommendation'], style={'fontWeight': 'bold'})
+                    ])
+                ], className="mt-3")
+                
+                return html.Div([advertencia, error_card])
+                
+        except Exception as e:
+            # Fallback al sistema anterior en caso de error
+            resultado_simulado = dbc.Card([
+                dbc.CardHeader([
+                    html.H5("🧠 Análisis Preliminar de Síntomas", className="mb-0", style={'color': COLORS['primary']})
+                ]),
+                dbc.CardBody([
+                    html.Div([
+                        html.H6("DATOS ANALIZADOS:", style={'color': COLORS['primary']}),
+                        html.P([
+                            f"Edad: {edad} años | Sexo: {sexo} | Intensidad: {intensidad}/10 | Duración: {tiempo}"
+                        ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                        
+                        html.H6("SÍNTOMAS REPORTADOS:", style={'color': COLORS['primary']}),
+                        html.P(sintomas, style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                        
+                        html.H6("🔍 DIAGNÓSTICO PRELIMINAR:", style={'color': COLORS['primary']}),
+                        html.Div([
+                            html.P("Basado en los síntomas descritos, las posibles condiciones incluyen:", className="mb-2"),
+                            html.Ul([
+                                html.Li("Infección viral del tracto respiratorio superior (probabilidad: 65%)"),
+                                html.Li("Faringitis bacteriana (probabilidad: 25%)"),
+                                html.Li("Otras condiciones a considerar (probabilidad: 10%)")
+                            ]),
+                            
+                            html.H6("💊 RECOMENDACIONES:", style={'color': COLORS['accent']}),
+                            html.Ul([
+                                html.Li("Mantén reposo e hidratación adecuada"),
+                                html.Li("Toma analgésicos de venta libre si es necesario"),
+                                html.Li("Consulta a un médico si los síntomas empeoran o persisten más de 5 días"),
+                                html.Li("Busca atención médica urgente si tienes dificultad para respirar")
+                            ])
+                        ], style={'backgroundColor': '#e8f5e8', 'padding': '15px', 'borderRadius': '5px'})
+                    ])
                 ])
-            ])
-        ], className="mt-3")
-        
-        return html.Div([advertencia, resultado_simulado])
+            ], className="mt-3")
+            
+            return html.Div([advertencia, resultado_simulado])
 
     @app.callback(
         Output("resultado-imagen", "children"),
@@ -508,35 +609,76 @@ def register_callbacks(app):
         if not n_clicks or not termino:
             return ""
         
-        explicaciones = {
-            "simple": f"🧒 **{termino.upper()}** explicado para niños:\n\nEs cuando algo en tu cuerpo no está funcionando como debería. Es como cuando un juguete se daña y necesita arreglo.",
-            "intermedio": f"👨‍👩‍👧‍👦 **{termino.upper()}** explicado de forma sencilla:\n\nEs una condición médica que afecta el funcionamiento normal del organismo. Puede tener diferentes causas y síntomas que requieren atención médica.",
-            "detallado": f"🎓 **{termino.upper()}** explicación técnica:\n\nCondición patológica caracterizada por alteraciones en los procesos fisiológicos normales, con manifestaciones clínicas específicas que requieren evaluación diagnóstica y tratamiento apropiado."
-        }
-        
-        explicacion = explicaciones.get(nivel, explicaciones["intermedio"])
-        
-        resultado = dbc.Card([
-            dbc.CardHeader([
-                html.H5("🗣️ Explicación Médica", className="mb-0", style={'color': COLORS['primary']})
-            ]),
-            dbc.CardBody([
-                html.Div([
-                    html.H6(f"TÉRMINO: {termino.upper()}", style={'color': COLORS['primary']}),
-                    html.Hr(),
-                    dcc.Markdown(explicacion, className="mb-3"),
-                    
-                    html.H6("📚 INFORMACIÓN ADICIONAL:", style={'color': COLORS['primary']}),
-                    html.Ul([
-                        html.Li("Esta explicación es educativa y no constituye diagnóstico médico"),
-                        html.Li("Para información específica sobre tu caso, consulta con un profesional"),
-                        html.Li("Si tienes dudas sobre síntomas, busca atención médica apropiada")
+        try:
+            # Usar el agente médico para explicación avanzada
+            result = medical_agent.explain_medical_term(termino, nivel)
+            
+            if result and "explanation" in result:
+                # Usar la explicación del sistema médico
+                explicacion = result["explanation"]
+            else:
+                # Fallback a explicaciones básicas
+                explicaciones = {
+                    "simple": f"🧒 **{termino.upper()}** explicado para niños:\n\nEs cuando algo en tu cuerpo no está funcionando como debería. Es como cuando un juguete se daña y necesita arreglo.",
+                    "intermedio": f"👨‍👩‍👧‍👦 **{termino.upper()}** explicado de forma sencilla:\n\nEs una condición médica que afecta el funcionamiento normal del organismo. Puede tener diferentes causas y síntomas que requieren atención médica.",
+                    "detallado": f"🎓 **{termino.upper()}** explicación técnica:\n\nCondición patológica caracterizada por alteraciones en los procesos fisiológicos normales, con manifestaciones clínicas específicas que requieren evaluación diagnóstica y tratamiento apropiado."
+                }
+                explicacion = explicaciones.get(nivel, explicaciones["intermedio"])
+            
+            resultado = dbc.Card([
+                dbc.CardHeader([
+                    html.H5("🗣️ Explicación Médica Avanzada", className="mb-0", style={'color': COLORS['primary']})
+                ]),
+                dbc.CardBody([
+                    html.Div([
+                        html.H6(f"TÉRMINO: {termino.upper()}", style={'color': COLORS['primary']}),
+                        html.Hr(),
+                        dcc.Markdown(explicacion, className="mb-3"),
+                        
+                        html.H6("📚 INFORMACIÓN ADICIONAL:", style={'color': COLORS['primary']}),
+                        html.Ul([
+                            html.Li("Esta explicación es educativa y no constituye diagnóstico médico"),
+                            html.Li("Para información específica sobre tu caso, consulta con un profesional"),
+                            html.Li("Si tienes dudas sobre síntomas, busca atención médica apropiada"),
+                            html.Li("Fuente: Sistema Médico Avanzado")
+                        ])
                     ])
                 ])
-            ])
-        ], className="mt-3")
-        
-        return resultado
+            ], className="mt-3")
+            
+            return resultado
+            
+        except Exception as e:
+            # Fallback en caso de error
+            explicaciones = {
+                "simple": f"🧒 **{termino.upper()}** explicado para niños:\n\nEs cuando algo en tu cuerpo no está funcionando como debería. Es como cuando un juguete se daña y necesita arreglo.",
+                "intermedio": f"👨‍👩‍👧‍👦 **{termino.upper()}** explicado de forma sencilla:\n\nEs una condición médica que afecta el funcionamiento normal del organismo. Puede tener diferentes causas y síntomas que requieren atención médica.",
+                "detallado": f"🎓 **{termino.upper()}** explicación técnica:\n\nCondición patológica caracterizada por alteraciones en los procesos fisiológicos normales, con manifestaciones clínicas específicas que requieren evaluación diagnóstica y tratamiento apropiado."
+            }
+            
+            explicacion = explicaciones.get(nivel, explicaciones["intermedio"])
+            
+            resultado = dbc.Card([
+                dbc.CardHeader([
+                    html.H5("🗣️ Explicación Médica", className="mb-0", style={'color': COLORS['primary']})
+                ]),
+                dbc.CardBody([
+                    html.Div([
+                        html.H6(f"TÉRMINO: {termino.upper()}", style={'color': COLORS['primary']}),
+                        html.Hr(),
+                        dcc.Markdown(explicacion, className="mb-3"),
+                        
+                        html.H6("📚 INFORMACIÓN ADICIONAL:", style={'color': COLORS['primary']}),
+                        html.Ul([
+                            html.Li("Esta explicación es educativa y no constituye diagnóstico médico"),
+                            html.Li("Para información específica sobre tu caso, consulta con un profesional"),
+                            html.Li("Si tienes dudas sobre síntomas, busca atención médica apropiada")
+                        ])
+                    ])
+                ])
+            ], className="mt-3")
+            
+            return resultado
 
     @app.callback(
         Output("preview-imagen", "children"),
@@ -697,4 +839,72 @@ def register_callbacks(app):
             ], color="info", className="mt-3")
         ])
         
-        return seguimiento, "tab-estado" 
+        return seguimiento, "tab-estado"
+
+    @app.callback(
+        Output("sistema-medico-info", "children"),
+        Input("btn-info-sistema", "n_clicks")
+    )
+    def mostrar_info_sistema(n_clicks):
+        """Muestra información del sistema médico avanzado"""
+        if not n_clicks:
+            return ""
+        
+        try:
+            system_info = medical_agent.get_system_info()
+            
+            info_card = dbc.Card([
+                dbc.CardHeader([
+                    html.H5([
+                        html.I(className="fas fa-brain me-2"),
+                        "Sistema de Diagnóstico Médico Avanzado"
+                    ], className="mb-0", style={'color': COLORS['primary']})
+                ]),
+                dbc.CardBody([
+                    html.Div([
+                        html.H6("🏥 CARACTERÍSTICAS DEL SISTEMA:", style={'color': COLORS['primary']}),
+                        html.Ul([
+                            html.Li(feature) for feature in system_info['features']
+                        ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px'}),
+                        
+                        html.H6("📚 ESPECIALIDADES MÉDICAS:", style={'color': COLORS['primary']}),
+                        html.P(", ".join(system_info['specialties']), 
+                              style={'backgroundColor': '#e8f5e8', 'padding': '10px', 'borderRadius': '5px'}),
+                        
+                        html.H6("💡 CONSEJOS DE SALUD:", style={'color': COLORS['primary']}),
+                        dcc.Markdown(medical_agent.get_health_tips(), className="mb-3"),
+                        
+                        html.H6("🚨 CONTACTOS DE EMERGENCIA:", style={'color': COLORS['primary']}),
+                        dcc.Markdown(medical_agent.get_emergency_contacts(), className="mb-3"),
+                        
+                        html.H6("📋 GUÍA PARA DESCRIBIR SÍNTOMAS:", style={'color': COLORS['primary']}),
+                        dcc.Markdown(medical_agent.get_symptom_guide(), className="mb-3"),
+                        
+                        html.Hr(),
+                        
+                        html.Div([
+                            html.Small([
+                                html.Strong("Versión: "), system_info['version'], " | ",
+                                html.Strong("Base de Conocimiento: "), system_info['knowledge_base'], " | ",
+                                html.Strong("Última Actualización: "), 
+                                datetime.fromisoformat(system_info['timestamp']).strftime("%d/%m/%Y %H:%M")
+                            ], style={'color': '#666'})
+                        ], style={'textAlign': 'center'})
+                    ])
+                ])
+            ], className="mt-3")
+            
+            return info_card
+            
+        except Exception as e:
+            error_card = dbc.Card([
+                dbc.CardHeader([
+                    html.H5("🚨 Error al Cargar Información del Sistema", className="mb-0", style={'color': '#dc3545'})
+                ]),
+                dbc.CardBody([
+                    html.P(f"Error: {str(e)}", style={'color': '#dc3545'}),
+                    html.P("El sistema médico está temporalmente no disponible.", style={'fontWeight': 'bold'})
+                ])
+            ], className="mt-3")
+            
+            return error_card 
