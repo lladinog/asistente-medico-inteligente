@@ -28,7 +28,7 @@ class MedicalKnowledgeBase:
     """Base de conocimiento médico completa y gratuita"""
     
     def __init__(self):
-        self.medical_conditions = {
+        self.medical_conditions = { 
             # RESPIRATORIO
             "resfriado_comun": {
                 "symptoms": ["tos", "estornudos", "congestión nasal", "dolor de garganta", "fatiga leve", "fiebre baja"],
@@ -75,6 +75,51 @@ class MedicalKnowledgeBase:
                 "specialist": "neumólogo",
                 "duration": "crónica"
             },
+            "epoc": {
+                "symptoms": ["disnea progresiva", "tos crónica", "expectoración", "fatiga", "sibilancias"],
+                "urgency": "urgent",
+                "description": "Enfermedad pulmonar obstructiva crónica",
+                "recommendations": ["Broncodilatadores", "Oxigenoterapia", "Rehabilitación pulmonar", "Dejar de fumar"],
+                "red_flags": ["exacerbación aguda", "cianosis", "confusión"],
+                "specialist": "neumólogo",
+                "duration": "crónica"
+            },
+            "embolia_pulmonar": {
+                "symptoms": ["dolor torácico súbito", "disnea", "tos con sangre", "taquicardia", "sudoración"],
+                "urgency": "emergency",
+                "description": "Obstrucción de arterias pulmonares por coágulo",
+                "recommendations": ["Atención médica inmediata", "Anticoagulantes", "Oxigenoterapia"],
+                "red_flags": ["colapso cardiovascular", "cianosis", "dolor torácico severo"],
+                "specialist": "neumólogo",
+                "duration": "emergencia"
+            },
+            "tuberculosis": {
+                "symptoms": ["tos persistente", "expectoración con sangre", "fiebre vespertina", "sudores nocturnos", "pérdida de peso"],
+                "urgency": "urgent",
+                "description": "Infección bacteriana pulmonar",
+                "recommendations": ["Tratamiento antituberculoso", "Aislamiento", "Seguimiento estricto"],
+                "red_flags": ["hemoptisis", "fiebre persistente", "pérdida de peso severa"],
+                "specialist": "neumólogo",
+                "duration": "6-12 meses de tratamiento"
+            },
+            "sinusitis": {
+                "symptoms": ["dolor facial", "congestión nasal", "secreción purulenta", "dolor de cabeza", "fiebre"],
+                "urgency": "routine",
+                "description": "Inflamación de los senos paranasales",
+                "recommendations": ["Descongestionantes", "Irrigación nasal", "Antibióticos si es bacteriana"],
+                "red_flags": ["dolor facial severo", "fiebre alta", "alteraciones visuales"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "1-2 semanas"
+            },
+            "faringitis": {
+                "symptoms": ["dolor de garganta", "dificultad para tragar", "fiebre", "ganglios inflamados", "enrojecimiento"],
+                "urgency": "routine",
+                "description": "Inflamación de la faringe",
+                "recommendations": ["Analgésicos", "Gárgaras", "Hidratación", "Antibióticos si es bacteriana"],
+                "red_flags": ["dificultad respiratoria", "babeo", "trismus"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "5-7 días"
+            },
             
             # CARDIOVASCULAR
             "hipertension": {
@@ -103,6 +148,42 @@ class MedicalKnowledgeBase:
                 "red_flags": ["desmayos frecuentes", "dolor torácico", "dificultad respiratoria"],
                 "specialist": "cardiólogo",
                 "duration": "variable"
+            },
+            "insuficiencia_cardiaca": {
+                "symptoms": ["disnea", "edema en piernas", "fatiga", "tos nocturna", "palpitaciones"],
+                "urgency": "urgent",
+                "description": "Incapacidad del corazón para bombear eficientemente",
+                "recommendations": ["Diuréticos", "IECA", "Beta-bloqueadores", "Restricción de sal"],
+                "red_flags": ["disnea en reposo", "edema pulmonar", "confusión"],
+                "specialist": "cardiólogo",
+                "duration": "crónica"
+            },
+            "angina_pecho": {
+                "symptoms": ["dolor torácico", "presión en el pecho", "dolor irradiado", "disnea", "sudoración"],
+                "urgency": "urgent",
+                "description": "Dolor torácico por isquemia miocárdica",
+                "recommendations": ["Nitroglicerina", "Reposo", "Evaluación cardiológica", "Control factores de riesgo"],
+                "red_flags": ["dolor en reposo", "duración prolongada", "cambio en patrón"],
+                "specialist": "cardiólogo",
+                "duration": "episódica"
+            },
+            "trombosis_venosa": {
+                "symptoms": ["dolor en pierna", "hinchazón", "enrojecimiento", "calor local", "sensibilidad"],
+                "urgency": "urgent",
+                "description": "Formación de coágulo en vena profunda",
+                "recommendations": ["Anticoagulantes", "Elevación de extremidad", "Medias compresivas"],
+                "red_flags": ["disnea súbita", "dolor torácico", "hinchazón masiva"],
+                "specialist": "angiólogo",
+                "duration": "3-6 meses de tratamiento"
+            },
+            "pericarditis": {
+                "symptoms": ["dolor torácico punzante", "fiebre", "fatiga", "tos seca", "dificultad respiratoria"],
+                "urgency": "urgent",
+                "description": "Inflamación del pericardio",
+                "recommendations": ["Antiinflamatorios", "Colchicina", "Reposo", "Seguimiento ecocardiográfico"],
+                "red_flags": ["taponamiento cardíaco", "derrame pericárdico", "hipotensión"],
+                "specialist": "cardiólogo",
+                "duration": "2-6 semanas"
             },
             
             # GASTROINTESTINAL
@@ -133,6 +214,69 @@ class MedicalKnowledgeBase:
                 "specialist": "cirujano",
                 "duration": "emergencia"
             },
+            "ulcera_peptica": {
+                "symptoms": ["dolor abdominal", "acidez", "náuseas", "pérdida de apetito", "pérdida de peso"],
+                "urgency": "urgent",
+                "description": "Lesión en mucosa gástrica o duodenal",
+                "recommendations": ["Inhibidores bomba protones", "Antibióticos si H. pylori", "Evitar AINES"],
+                "red_flags": ["hemorragia digestiva", "perforación", "obstrucción"],
+                "specialist": "gastroenterólogo",
+                "duration": "4-8 semanas"
+            },
+            "hepatitis": {
+                "symptoms": ["ictericia", "fatiga", "dolor abdominal", "náuseas", "orina oscura"],
+                "urgency": "urgent",
+                "description": "Inflamación del hígado",
+                "recommendations": ["Reposo", "Dieta especial", "Evitar alcohol", "Seguimiento hepático"],
+                "red_flags": ["encefalopatía", "coagulopatía", "ascitis"],
+                "specialist": "gastroenterólogo",
+                "duration": "variable según tipo"
+            },
+            "colecistitis": {
+                "symptoms": ["dolor en hipocondrio derecho", "fiebre", "náuseas", "vómitos", "ictericia"],
+                "urgency": "urgent",
+                "description": "Inflamación de la vesícula biliar",
+                "recommendations": ["Antibióticos", "Analgésicos", "Cirugía si es necesaria"],
+                "red_flags": ["peritonitis", "sepsis", "pancreatitis"],
+                "specialist": "cirujano",
+                "duration": "1-2 semanas"
+            },
+            "pancreatitis": {
+                "symptoms": ["dolor abdominal intenso", "náuseas", "vómitos", "fiebre", "taquicardia"],
+                "urgency": "emergency",
+                "description": "Inflamación del páncreas",
+                "recommendations": ["Hospitalización", "Ayuno", "Hidratación IV", "Control del dolor"],
+                "red_flags": ["shock", "falla multiorgánica", "necrosis pancreática"],
+                "specialist": "gastroenterólogo",
+                "duration": "1-2 semanas"
+            },
+            "sindrome_intestino_irritable": {
+                "symptoms": ["dolor abdominal", "cambios en hábito intestinal", "distensión", "gases", "moco en heces"],
+                "urgency": "routine",
+                "description": "Trastorno funcional intestinal",
+                "recommendations": ["Dieta FODMAP", "Fibra", "Probióticos", "Manejo del estrés"],
+                "red_flags": ["sangre en heces", "pérdida de peso", "fiebre"],
+                "specialist": "gastroenterólogo",
+                "duration": "crónica"
+            },
+            "enfermedad_inflamatoria_intestinal": {
+                "symptoms": ["diarrea crónica", "sangre en heces", "dolor abdominal", "pérdida de peso", "fiebre"],
+                "urgency": "urgent",
+                "description": "Inflamación crónica del tracto digestivo",
+                "recommendations": ["Inmunosupresores", "Corticoides", "Biológicos", "Cirugía si es necesaria"],
+                "red_flags": ["obstrucción", "perforación", "hemorragia masiva"],
+                "specialist": "gastroenterólogo",
+                "duration": "crónica"
+            },
+            "hernia_hiatal": {
+                "symptoms": ["acidez", "regurgitación", "dolor torácico", "disfagia", "tos"],
+                "urgency": "routine",
+                "description": "Protrusión del estómago hacia el tórax",
+                "recommendations": ["Inhibidores bomba protones", "Dieta", "Evitar acostarse después de comer"],
+                "red_flags": ["disfagia severa", "vómito persistente", "dolor torácico"],
+                "specialist": "gastroenterólogo",
+                "duration": "crónica"
+            },
             
             # NEUROLÓGICO
             "migrana": {
@@ -162,6 +306,69 @@ class MedicalKnowledgeBase:
                 "specialist": "neurólogo",
                 "duration": "emergencia"
             },
+            "epilepsia": {
+                "symptoms": ["convulsiones", "pérdida de conciencia", "movimientos involuntarios", "confusión post-ictal"],
+                "urgency": "urgent",
+                "description": "Trastorno neurológico con convulsiones recurrentes",
+                "recommendations": ["Anticonvulsivantes", "Evitar desencadenantes", "Protección durante crisis"],
+                "red_flags": ["status epilepticus", "lesiones por caídas", "depresión respiratoria"],
+                "specialist": "neurólogo",
+                "duration": "crónica"
+            },
+            "parkinson": {
+                "symptoms": ["temblor en reposo", "rigidez", "bradicinesia", "inestabilidad postural", "alteraciones de la marcha"],
+                "urgency": "routine",
+                "description": "Enfermedad neurodegenerativa",
+                "recommendations": ["Levodopa", "Fisioterapia", "Terapia ocupacional", "Ejercicio"],
+                "red_flags": ["caídas frecuentes", "disfagia", "demencia"],
+                "specialist": "neurólogo",
+                "duration": "crónica progresiva"
+            },
+            "alzheimer": {
+                "symptoms": ["pérdida de memoria", "confusión", "desorientación", "cambios de personalidad", "dificultad para tareas"],
+                "urgency": "routine",
+                "description": "Demencia neurodegenerativa",
+                "recommendations": ["Inhibidores colinesterasa", "Estimulación cognitiva", "Cuidado integral"],
+                "red_flags": ["agitación severa", "síntomas psicóticos", "desnutrición"],
+                "specialist": "neurólogo",
+                "duration": "crónica progresiva"
+            },
+            "esclerosis_multiple": {
+                "symptoms": ["fatiga", "debilidad", "alteraciones visuales", "espasticidad", "alteraciones cognitivas"],
+                "urgency": "urgent",
+                "description": "Enfermedad desmielinizante del SNC",
+                "recommendations": ["Inmunomoduladores", "Corticoides en brotes", "Fisioterapia", "Sintomáticos"],
+                "red_flags": ["neuritis óptica", "mielitis transversa", "deterioro cognitivo"],
+                "specialist": "neurólogo",
+                "duration": "crónica"
+            },
+            "neuropatia_periferica": {
+                "symptoms": ["hormigueo", "entumecimiento", "dolor neuropático", "debilidad", "pérdida de reflejos"],
+                "urgency": "routine",
+                "description": "Disfunción de nervios periféricos",
+                "recommendations": ["Tratamiento causa subyacente", "Analgésicos neuropáticos", "Fisioterapia"],
+                "red_flags": ["debilidad progresiva", "dificultad respiratoria", "disautonomía"],
+                "specialist": "neurólogo",
+                "duration": "variable"
+            },
+            "meningitis": {
+                "symptoms": ["fiebre alta", "dolor de cabeza severo", "rigidez de nuca", "fotofobia", "vómitos"],
+                "urgency": "emergency",
+                "description": "Inflamación de las meninges",
+                "recommendations": ["Antibióticos IV inmediatos", "Corticoides", "Aislamiento", "Soporte vital"],
+                "red_flags": ["petequias", "alteración conciencia", "convulsiones"],
+                "specialist": "neurólogo",
+                "duration": "emergencia"
+            },
+            "vertigo": {
+                "symptoms": ["sensación de giro", "náuseas", "vómitos", "desequilibrio", "nistagmo"],
+                "urgency": "routine",
+                "description": "Trastorno del equilibrio",
+                "recommendations": ["Maniobras de reposicionamiento", "Antivertiginosos", "Fisioterapia vestibular"],
+                "red_flags": ["síntomas neurológicos", "cefalea severa", "hipoacusia"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "días a semanas"
+            },
             
             # DERMATOLÓGICO
             "dermatitis": {
@@ -179,6 +386,69 @@ class MedicalKnowledgeBase:
                 "description": "Enfermedad autoinmune de la piel",
                 "recommendations": ["Tratamientos tópicos", "Fototerapia", "Medicamentos sistémicos", "Hidratación"],
                 "red_flags": ["artritis psoriásica", "infección"],
+                "specialist": "dermatólogo",
+                "duration": "crónica"
+            },
+            "eczema": {
+                "symptoms": ["piel seca", "picazón intensa", "enrojecimiento", "vesículas", "costras"],
+                "urgency": "routine",
+                "description": "Dermatitis atópica crónica",
+                "recommendations": ["Hidratación constante", "Corticoides tópicos", "Evitar alérgenos"],
+                "red_flags": ["infección bacteriana", "eczema herpético"],
+                "specialist": "dermatólogo",
+                "duration": "crónica"
+            },
+            "acne": {
+                "symptoms": ["comedones", "pápulas", "pústulas", "nódulos", "cicatrices"],
+                "urgency": "routine",
+                "description": "Enfermedad inflamatoria del folículo pilosebáceo",
+                "recommendations": ["Retinoides tópicos", "Antibióticos", "Cuidado de la piel"],
+                "red_flags": ["acné quístico severo", "cicatrices permanentes"],
+                "specialist": "dermatólogo",
+                "duration": "meses a años"
+            },
+            "urticaria": {
+                "symptoms": ["ronchas", "picazón intensa", "hinchazón", "enrojecimiento", "angioedema"],
+                "urgency": "urgent",
+                "description": "Reacción alérgica cutánea",
+                "recommendations": ["Antihistamínicos", "Corticoides", "Evitar desencadenantes"],
+                "red_flags": ["anafilaxia", "dificultad respiratoria", "hinchazón facial"],
+                "specialist": "dermatólogo",
+                "duration": "horas a días"
+            },
+            "celulitis": {
+                "symptoms": ["enrojecimiento", "hinchazón", "calor", "dolor", "fiebre"],
+                "urgency": "urgent",
+                "description": "Infección bacteriana de tejidos blandos",
+                "recommendations": ["Antibióticos", "Elevación", "Analgésicos", "Seguimiento estrecho"],
+                "red_flags": ["sepsis", "necrosis", "fascitis necrotizante"],
+                "specialist": "dermatólogo",
+                "duration": "1-2 semanas"
+            },
+            "herpes_zoster": {
+                "symptoms": ["dolor punzante", "vesículas", "distribución dermatómica", "fiebre", "malestar"],
+                "urgency": "urgent",
+                "description": "Reactivación del virus varicela-zóster",
+                "recommendations": ["Antivirales", "Analgésicos", "Cuidado local", "Aislamiento"],
+                "red_flags": ["afectación ocular", "neuralgia post-herpética", "diseminación"],
+                "specialist": "dermatólogo",
+                "duration": "2-4 semanas"
+            },
+            "melanoma": {
+                "symptoms": ["lunar asimétrico", "bordes irregulares", "cambio de color", "diámetro >6mm", "evolución"],
+                "urgency": "urgent",
+                "description": "Cáncer de piel maligno",
+                "recommendations": ["Biopsia inmediata", "Extirpación quirúrgica", "Estudio extensión"],
+                "red_flags": ["ulceración", "sangrado", "crecimiento rápido"],
+                "specialist": "dermatólogo",
+                "duration": "requiere tratamiento inmediato"
+            },
+            "vitiligo": {
+                "symptoms": ["manchas blancas", "despigmentación", "distribución simétrica", "progresión"],
+                "urgency": "routine",
+                "description": "Trastorno autoinmune de la pigmentación",
+                "recommendations": ["Corticoides tópicos", "Inhibidores calcineurina", "Fototerapia"],
+                "red_flags": ["progresión rápida", "afectación extensa"],
                 "specialist": "dermatólogo",
                 "duration": "crónica"
             },
@@ -202,6 +472,78 @@ class MedicalKnowledgeBase:
                 "specialist": "traumatólogo",
                 "duration": "1-6 semanas"
             },
+            "artritis_reumatoidea": {
+                "symptoms": ["dolor articular simétrico", "rigidez matutina", "inflamación", "fatiga", "fiebre"],
+                "urgency": "urgent",
+                "description": "Enfermedad autoinmune articular",
+                "recommendations": ["DMARDs", "Metotrexato", "Biológicos", "Fisioterapia"],
+                "red_flags": ["vasculitis", "nódulos reumatoideos", "afectación sistémica"],
+                "specialist": "reumatólogo",
+                "duration": "crónica"
+            },
+            "osteoporosis": {
+                "symptoms": ["fracturas por fragilidad", "dolor óseo", "pérdida de altura", "cifosis"],
+                "urgency": "routine",
+                "description": "Disminución de la densidad ósea",
+                "recommendations": ["Bifosfonatos", "Calcio", "Vitamina D", "Ejercicio con peso"],
+                "red_flags": ["fracturas vertebrales", "fractura de cadera"],
+                "specialist": "reumatólogo",
+                "duration": "crónica"
+            },
+            "fibromialgia": {
+                "symptoms": ["dolor generalizado", "fatiga", "alteraciones del sueño", "puntos sensibles", "rigidez"],
+                "urgency": "routine",
+                "description": "Síndrome de dolor crónico",
+                "recommendations": ["Antidepresivos", "Pregabalina", "Ejercicio suave", "Terapia cognitiva"],
+                "red_flags": ["depresión severa", "ideación suicida"],
+                "specialist": "reumatólogo",
+                "duration": "crónica"
+            },
+            "gota": {
+                "symptoms": ["dolor articular intenso", "inflamación", "enrojecimiento", "calor", "inicio súbito"],
+                "urgency": "urgent",
+                "description": "Artritis por cristales de ácido úrico",
+                "recommendations": ["Colchicina", "AINES", "Alopurinol", "Dieta baja en purinas"],
+                "red_flags": ["afectación poliarticular", "fiebre", "tofos"],
+                "specialist": "reumatólogo",
+                "duration": "ataques agudos 3-10 días"
+            },
+            "hernia_discal": {
+                "symptoms": ["dolor lumbar", "ciática", "entumecimiento", "debilidad en piernas", "parestesias"],
+                "urgency": "urgent",
+                "description": "Protrusión del disco intervertebral",
+                "recommendations": ["Analgésicos", "Relajantes musculares", "Fisioterapia", "Cirugía si es severa"],
+                "red_flags": ["síndrome cauda equina", "déficit neurológico", "incontinencia"],
+                "specialist": "traumatólogo",
+                "duration": "6-12 semanas"
+            },
+            "tendinitis": {
+                "symptoms": ["dolor al movimiento", "sensibilidad", "rigidez", "inflamación leve", "crepitación"],
+                "urgency": "routine",
+                "description": "Inflamación de tendón",
+                "recommendations": ["Reposo", "Hielo", "Antiinflamatorios", "Fisioterapia"],
+                "red_flags": ["ruptura tendinosa", "infección", "dolor severo"],
+                "specialist": "traumatólogo",
+                "duration": "2-6 semanas"
+            },
+            "esguince": {
+                "symptoms": ["dolor", "hinchazón", "hematoma", "limitación funcional", "inestabilidad"],
+                "urgency": "routine",
+                "description": "Lesión ligamentaria",
+                "recommendations": ["RICE", "Vendaje", "Fisioterapia", "Rehabilitación gradual"],
+                "red_flags": ["ruptura completa", "fractura asociada", "compromiso vascular"],
+                "specialist": "traumatólogo",
+                "duration": "2-8 semanas"
+            },
+            "fractura": {
+                "symptoms": ["dolor intenso", "deformidad", "hinchazón", "hematoma", "impotencia funcional"],
+                "urgency": "emergency",
+                "description": "Rotura ósea",
+                "recommendations": ["Inmovilización", "Analgésicos", "Reducción", "Fijación"],
+                "red_flags": ["fractura expuesta", "compromiso vascular", "síndrome compartimental"],
+                "specialist": "traumatólogo",
+                "duration": "6-12 semanas"
+            },
             
             # ENDOCRINO
             "diabetes": {
@@ -221,15 +563,451 @@ class MedicalKnowledgeBase:
                 "red_flags": ["mixedema", "alteraciones cardíacas"],
                 "specialist": "endocrinólogo",
                 "duration": "crónica"
+            },
+            "hipertiroidismo": {
+                "symptoms": ["pérdida de peso", "palpitaciones", "sudoración", "nerviosismo", "temblor"],
+                "urgency": "urgent",
+                "description": "Función tiroidea aumentada",
+                "recommendations": ["Antitiroideos", "Beta-bloqueadores", "Yodo radioactivo", "Cirugía"],
+                "red_flags": ["tormenta tiroidea", "fibrilación auricular", "insuficiencia cardíaca"],
+                "specialist": "endocrinólogo",
+                "duration": "meses a años"
+            },
+            "sindrome_cushing": {
+                "symptoms": ["aumento de peso central", "estrías púrpuras", "cara de luna", "hipertensión", "debilidad"],
+                "urgency": "routine",
+                "description": "Exceso de cortisol",
+                "recommendations": ["Tratamiento causa subyacente", "Control metabólico", "Cirugía si tumor"],
+                "red_flags": ["diabetes", "osteoporosis", "psicosis"],
+                "specialist": "endocrinólogo",
+                "duration": "variable"
+            },
+            "addison": {
+                "symptoms": ["fatiga", "pérdida de peso", "hipotensión", "hiperpigmentación", "náuseas"],
+                "urgency": "urgent",
+                "description": "Insuficiencia suprarrenal",
+                "recommendations": ["Corticoides", "Mineralocorticoides", "Educación paciente"],
+                "red_flags": ["crisis addisoniana", "shock", "hipoglucemia"],
+                "specialist": "endocrinólogo",
+                "duration": "crónica"
+            },
+            "diabetes_insipida": {
+                "symptoms": ["poliuria", "polidipsia", "nicturia", "deshidratación", "hipernatremia"],
+                "urgency": "urgent",
+                "description": "Deficiencia de ADH",
+                "recommendations": ["Desmopresina", "Hidratación", "Control electrolitos"],
+                "red_flags": ["deshidratación severa", "alteraciones neurológicas"],
+                "specialist": "endocrinólogo",
+                "duration": "variable"
+            },
+            
+            # GENITOURINARIO
+            "infeccion_urinaria": {
+                "symptoms": ["disuria", "frecuencia urinaria", "urgencia", "dolor suprapúbico", "orina turbia"],
+                "urgency": "routine",
+                "description": "Infección del tracto urinario",
+                "recommendations": ["Antibióticos", "Hidratación abundante", "Analgésicos", "Seguimiento"],
+                "red_flags": ["fiebre", "dolor lumbar", "náuseas"],
+                "specialist": "urólogo",
+                "duration": "3-7 días"
+            },
+            "pielonefritis": {
+                "symptoms": ["fiebre alta", "dolor lumbar", "náuseas", "vómitos", "disuria"],
+                "urgency": "urgent",
+                "description": "Infección renal",
+                "recommendations": ["Antibióticos IV", "Hospitalización", "Hidratación", "Control imaging"],
+                "red_flags": ["sepsis", "absceso renal", "insuficiencia renal"],
+                "specialist": "urólogo",
+                "duration": "1-2 semanas"
+            },
+            "litiasis_renal": {
+                "symptoms": ["dolor cólico intenso", "hematuria", "náuseas", "vómitos", "disuria"],
+                "urgency": "urgent",
+                "description": "Cálculos en el riñón",
+                "recommendations": ["Analgésicos potentes", "Hidratación", "Litotripsia", "Cirugía si necesario"],
+                "red_flags": ["anuria", "fiebre", "insuficiencia renal"],
+                "specialist": "urólogo",
+                "duration": "días a semanas"
+            },
+            "insuficiencia_renal": {
+                "symptoms": ["oliguria", "edema", "fatiga", "náuseas", "alteraciones electrolíticas"],
+                "urgency": "urgent",
+                "description": "Pérdida de función renal",
+                "recommendations": ["Diálisis", "Control líquidos", "Dieta especial", "Tratamiento causa"],
+                "red_flags": ["uremia", "edema pulmonar", "hiperpotasemia"],
+                "specialist": "nefrólogo",
+                "duration": "variable"
+            },
+            "prostatitis": {
+                "symptoms": ["dolor pélvico", "disuria", "frecuencia", "fiebre", "dolor perineal"],
+                "urgency": "urgent",
+                "description": "Inflamación de la próstata",
+                "recommendations": ["Antibióticos", "Alfabloqueadores", "Analgésicos", "Sitz baths"],
+                "red_flags": ["retención urinaria", "sepsis", "absceso"],
+                "specialist": "urólogo",
+                "duration": "4-6 semanas"
+            },
+            "hiperplasia_prostatica": {
+                "symptoms": ["chorro débil", "frecuencia", "nicturia", "goteo terminal", "sensación vaciado incompleto"],
+                "urgency": "routine",
+                "description": "Crecimiento benigno de próstata",
+                "recommendations": ["Alfabloqueadores", "Inhibidores 5-alfa reductasa", "Cirugía"],
+                "red_flags": ["retención urinaria", "hematuria", "infecciones recurrentes"],
+                "specialist": "urólogo",
+                "duration": "crónica progresiva"
+            },
+            "cistitis": {
+                "symptoms": ["disuria", "urgencia", "frecuencia", "dolor suprapúbico", "hematuria"],
+                "urgency": "routine",
+                "description": "Inflamación de la vejiga",
+                "recommendations": ["Antibióticos", "Hidratación", "Analgésicos", "Medidas higiénicas"],
+                "red_flags": ["fiebre", "dolor lumbar", "hematuria macroscópica"],
+                "specialist": None,
+                "duration": "3-5 días"
+            },
+            
+            # GINECOLÓGICO
+            "vaginitis": {
+                "symptoms": ["flujo vaginal", "picazón", "ardor", "dispareunia", "olor"],
+                "urgency": "routine",
+                "description": "Inflamación vaginal",
+                "recommendations": ["Antifúngicos", "Antibióticos según causa", "Probióticos"],
+                "red_flags": ["fiebre", "dolor pélvico", "sangrado"],
+                "specialist": "ginecólogo",
+                "duration": "1-2 semanas"
+            },
+            "endometriosis": {
+                "symptoms": ["dismenorrea", "dispareunia", "dolor pélvico crónico", "infertilidad", "sangrado anormal"],
+                "urgency": "routine",
+                "description": "Tejido endometrial fuera del útero",
+                "recommendations": ["Analgésicos", "Hormonoterapia", "Cirugía laparoscópica"],
+                "red_flags": ["masa anexial", "dolor severo", "infertilidad"],
+                "specialist": "ginecólogo",
+                "duration": "crónica"
+            },
+            "miomas_uterinos": {
+                "symptoms": ["menorragia", "dolor pélvico", "masa abdominal", "síntomas compresivos"],
+                "urgency": "routine",
+                "description": "Tumores benignos del útero",
+                "recommendations": ["Observación", "Hormonoterapia", "Cirugía", "Embolización"],
+                "red_flags": ["anemia severa", "crecimiento rápido", "torsión"],
+                "specialist": "ginecólogo",
+                "duration": "variable"
+            },
+            "ovarios_poliquisticos": {
+                "symptoms": ["irregularidades menstruales", "hirsutismo", "acné", "obesidad", "infertilidad"],
+                "urgency": "routine",
+                "description": "Síndrome endocrino-metabólico",
+                "recommendations": ["Metformina", "Anticonceptivos", "Antiandrogénicos", "Cambios estilo vida"],
+                "red_flags": ["diabetes", "síndrome metabólico", "cáncer endometrial"],
+                "specialist": "ginecólogo",
+                "duration": "crónica"
+            },
+            
+            # OFTALMOLÓGICO
+            "conjuntivitis": {
+                "symptoms": ["ojo rojo", "secreción", "picazón", "sensación cuerpo extraño", "lagrimeo"],
+                "urgency": "routine",
+                "description": "Inflamación de la conjuntiva",
+                "recommendations": ["Lágrimas artificiales", "Antibióticos si bacteriana", "Antihistamínicos"],
+                "red_flags": ["dolor severo", "pérdida visión", "fotofobia"],
+                "specialist": "oftalmólogo",
+                "duration": "1-2 semanas"
+            },
+            "glaucoma": {
+                "symptoms": ["pérdida campo visual", "dolor ocular", "halos", "náuseas", "visión borrosa"],
+                "urgency": "urgent",
+                "description": "Aumento presión intraocular",
+                "recommendations": ["Gotas hipotensoras", "Cirugía", "Seguimiento regular"],
+                "red_flags": ["glaucoma agudo", "pérdida visual súbita", "dolor severo"],
+                "specialist": "oftalmólogo",
+                "duration": "crónica"
+            },
+            "cataratas": {
+                "symptoms": ["visión borrosa", "deslumbramiento", "cambios refracción", "diplopía monocular"],
+                "urgency": "routine",
+                "description": "Opacidad del cristalino",
+                "recommendations": ["Cirugía cuando interfiere visión", "Lentes correctores temporales"],
+                "red_flags": ["pérdida visual significativa", "glaucoma secundario"],
+                "specialist": "oftalmólogo",
+                "duration": "progresiva"
+            },
+            "retinopatia_diabetica": {
+                "symptoms": ["visión borrosa", "manchas visuales", "pérdida visual", "moscas volantes"],
+                "urgency": "urgent",
+                "description": "Complicación ocular de diabetes",
+                "recommendations": ["Control glucémico", "Láser", "Inyecciones intravítreas"],
+                "red_flags": ["hemorragia vítrea", "desprendimiento retina", "neovascularización"],
+                "specialist": "oftalmólogo",
+                "duration": "crónica progresiva"
+            },
+            "degeneracion_macular": {
+                "symptoms": ["pérdida visión central", "metamorfopsia", "escotomas", "dificultad lectura"],
+                "urgency": "urgent",
+                "description": "Degeneración de la mácula",
+                "recommendations": ["Inyecciones anti-VEGF", "Vitaminas", "Magnificación"],
+                "red_flags": ["pérdida visual súbita", "hemorragia", "exudación"],
+                "specialist": "oftalmólogo",
+                "duration": "crónica progresiva"
+            },
+            
+            # OTORRINOLARINGOLÓGICO
+            "otitis_media": {
+                "symptoms": ["dolor de oído", "fiebre", "hipoacusia", "secreción", "irritabilidad"],
+                "urgency": "routine",
+                "description": "Infección del oído medio",
+                "recommendations": ["Antibióticos", "Analgésicos", "Descongestionantes"],
+                "red_flags": ["mastoiditis", "meningitis", "parálisis facial"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "1-2 semanas"
+            },
+            "hipoacusia": {
+                "symptoms": ["pérdida auditiva", "tinnitus", "sensación plenitud", "dificultad comunicación"],
+                "urgency": "routine",
+                "description": "Disminución de la audición",
+                "recommendations": ["Audífonos", "Implantes", "Tratamiento causa subyacente"],
+                "red_flags": ["hipoacusia súbita", "asimetría", "síntomas neurológicos"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "variable"
+            },
+            "rinitis_alergica": {
+                "symptoms": ["estornudos", "rinorrea", "congestión", "picazón nasal", "lagrimeo"],
+                "urgency": "routine",
+                "description": "Inflamación alérgica de la nariz",
+                "recommendations": ["Antihistamínicos", "Corticoides nasales", "Evitar alérgenos"],
+                "red_flags": ["asma asociada", "sinusitis", "pólipos"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "estacional o crónica"
+            },
+            "laringitis": {
+                "symptoms": ["disfonía", "tos seca", "dolor garganta", "carraspeo", "fatiga vocal"],
+                "urgency": "routine",
+                "description": "Inflamación de la laringe",
+                "recommendations": ["Reposo vocal", "Hidratación", "Humidificación", "Antiinflamatorios"],
+                "red_flags": ["estridor", "disfagia", "fiebre alta"],
+                "specialist": "otorrinolaringólogo",
+                "duration": "1-2 semanas"
+            },
+            
+            # HEMATOLÓGICO
+            "anemia": {
+                "symptoms": ["fatiga", "palidez", "disnea", "palpitaciones", "debilidad"],
+                "urgency": "routine",
+                "description": "Disminución de hemoglobina",
+                "recommendations": ["Suplementos hierro", "Transfusión si severa", "Tratar causa"],
+                "red_flags": ["anemia severa", "sangrado activo", "insuficiencia cardíaca"],
+                "specialist": "hematólogo",
+                "duration": "variable"
+            },
+            "leucemia": {
+                "symptoms": ["fatiga", "fiebre", "infecciones", "sangrado", "pérdida peso"],
+                "urgency": "emergency",
+                "description": "Cáncer de células sanguíneas",
+                "recommendations": ["Quimioterapia", "Trasplante médula ósea", "Soporte transfusional"],
+                "red_flags": ["leucostasis", "síndrome lisis tumoral", "infecciones severas"],
+                "specialist": "hematólogo",
+                "duration": "meses a años"
+            },
+            "trombocitopenia": {
+                "symptoms": ["petequias", "equimosis", "sangrado mucosas", "menorragia"],
+                "urgency": "urgent",
+                "description": "Disminución de plaquetas",
+                "recommendations": ["Corticoides", "Inmunoglobulinas", "Transfusión plaquetas"],
+                "red_flags": ["hemorragia intracraneal", "sangrado masivo", "cuenta <10.000"],
+                "specialist": "hematólogo",
+                "duration": "variable"
+            },
+            "linfoma": {
+                "symptoms": ["adenopatías", "fiebre", "sudores nocturnos", "pérdida peso", "fatiga"],
+                "urgency": "urgent",
+                "description": "Cáncer del sistema linfático",
+                "recommendations": ["Quimioterapia", "Radioterapia", "Inmunoterapia"],
+                "red_flags": ["síndrome vena cava", "compresión medular", "síndrome lisis"],
+                "specialist": "hematólogo",
+                "duration": "meses a años"
+            },
+            
+            # PSIQUIÁTRICO
+            "depresion": {
+                "symptoms": ["tristeza", "anhedonia", "fatiga", "alteraciones sueño", "sentimientos culpa"],
+                "urgency": "routine",
+                "description": "Trastorno del estado de ánimo",
+                "recommendations": ["Antidepresivos", "Psicoterapia", "Cambios estilo vida"],
+                "red_flags": ["ideación suicida", "síntomas psicóticos", "catatonia"],
+                "specialist": "psiquiatra",
+                "duration": "meses a años"
+            },
+            "ansiedad": {
+                "symptoms": ["preocupación excesiva", "tensión", "palpitaciones", "sudoración", "temblor"],
+                "urgency": "routine",
+                "description": "Trastorno de ansiedad",
+                "recommendations": ["Ansiolíticos", "Antidepresivos", "Terapia cognitivo-conductual"],
+                "red_flags": ["ataques pánico", "agorafobia", "deterioro funcional"],
+                "specialist": "psiquiatra",
+                "duration": "crónica"
+            },
+            "trastorno_bipolar": {
+                "symptoms": ["episodios manía", "episodios depresión", "cambios humor", "impulsividad"],
+                "urgency": "urgent",
+                "description": "Trastorno del estado de ánimo",
+                "recommendations": ["Estabilizadores ánimo", "Antipsicóticos", "Psicoterapia"],
+                "red_flags": ["episodio maníaco severo", "psicosis", "riesgo suicida"],
+                "specialist": "psiquiatra",
+                "duration": "crónica"
+            },
+            "esquizofrenia": {
+                "symptoms": ["alucinaciones", "delirios", "desorganización", "síntomas negativos"],
+                "urgency": "urgent",
+                "description": "Trastorno psicótico crónico",
+                "recommendations": ["Antipsicóticos", "Rehabilitación", "Soporte psicosocial"],
+                "red_flags": ["agitación severa", "comportamiento violento", "catatonia"],
+                "specialist": "psiquiatra",
+                "duration": "crónica"
+            },
+            
+            # INFECCIOSO
+            "mononucleosis": {
+                "symptoms": ["fiebre", "dolor garganta", "adenopatías", "fatiga", "esplenomegalia"],
+                "urgency": "routine",
+                "description": "Infección por virus Epstein-Barr",
+                "recommendations": ["Reposo", "Analgésicos", "Hidratación", "Evitar deportes contacto"],
+                "red_flags": ["ruptura esplénica", "obstrucción respiratoria", "hepatitis"],
+                "specialist": None,
+                "duration": "2-4 semanas"
+            },
+            "varicela": {
+                "symptoms": ["erupción vesicular", "fiebre", "prurito", "malestar general"],
+                "urgency": "routine",
+                "description": "Infección por virus varicela-zóster",
+                "recommendations": ["Antihistamínicos", "Antivirales si adulto", "Aislamiento"],
+                "red_flags": ["neumonía", "encefalitis", "infección bacteriana secundaria"],
+                "specialist": None,
+                "duration": "1-2 semanas"
+            },
+            "hepatitis_viral": {
+                "symptoms": ["ictericia", "fatiga", "náuseas", "dolor abdominal", "orina oscura"],
+                "urgency": "urgent",
+                "description": "Inflamación viral del hígado",
+                "recommendations": ["Reposo", "Dieta", "Evitar hepatotóxicos", "Seguimiento"],
+                "red_flags": ["falla hepática", "encefalopatía", "coagulopatía"],
+                "specialist": "gastroenterólogo",
+                "duration": "semanas a meses"
+            },
+            "covid19": {
+                "symptoms": ["fiebre", "tos", "disnea", "anosmia", "fatiga"],
+                "urgency": "routine",
+                "description": "Infección por SARS-CoV-2",
+                "recommendations": ["Aislamiento", "Sintomáticos", "Antivirales si indicado"],
+                "red_flags": ["neumonía", "insuficiencia respiratoria", "tromboembolismo"],
+                "specialist": None,
+                "duration": "1-2 semanas"
+            },
+            
+            # EMERGENCIAS
+            "shock_anafilactico": {
+                "symptoms": ["urticaria generalizada", "disnea", "hipotensión", "angioedema", "pérdida conciencia"],
+                "urgency": "emergency",
+                "description": "Reacción alérgica severa",
+                "recommendations": ["Epinefrina", "Corticoides", "Antihistamínicos", "Soporte vital"],
+                "red_flags": ["paro cardiorrespiratorio", "broncoespasmo severo", "colapso"],
+                "specialist": "emergenciólogo",
+                "duration": "emergencia"
+            },
+            "abdomen_agudo": {
+                "symptoms": ["dolor abdominal severo", "rigidez", "náuseas", "vómitos", "fiebre"],
+                "urgency": "emergency",
+                "description": "Síndrome de emergencia abdominal",
+                "recommendations": ["Evaluación quirúrgica", "Analgésicos", "Hidratación IV"],
+                "red_flags": ["peritonitis", "shock", "distensión abdominal"],
+                "specialist": "cirujano",
+                "duration": "emergencia"
+            },
+            "convulsiones": {
+                "symptoms": ["movimientos involuntarios", "pérdida conciencia", "incontinencia", "confusión post-ictal"],
+                "urgency": "emergency",
+                "description": "Crisis convulsiva",
+                "recommendations": ["Protección vía aérea", "Benzodiacepinas", "Anticonvulsivantes"],
+                "red_flags": ["status epilepticus", "traumatismo", "fiebre alta"],
+                "specialist": "neurólogo",
+                "duration": "emergencia"
             }
         }
         
         # Síntomas de emergencia absoluta
         self.emergency_symptoms = {
-            "dolor_toracico_severo", "dificultad_respiratoria_severa", "perdida_conciencia",
-            "convulsiones", "sangrado_abundante", "paralisis", "confusion_severa",
-            "dolor_abdominal_severo", "vomito_sangre", "perdida_vision_subita",
-            "debilidad_facial_subita", "dificultad_hablar_subita"
+            "dolor_toracico_severo", "dolor_toracico_opresivo", "dolor_brazo_izquierdo",
+            "dolor_mandibula", "sudoracion_profusa", "nauseas_con_dolor_toracico",
+            "palpitaciones_severas", "taquicardia_extrema", "bradicardia_severa",
+            "presion_arterial_muy_alta", "presion_arterial_muy_baja", "shock_cardiogenico",
+            "edema_pulmonar_agudo", "cianosis_central", "dolor_toracico_punzante",
+            "dificultad_respiratoria_severa", "disnea_extrema", "estridor_respiratorio",
+            "cianosis_labios", "cianosis_unas", "respiracion_superficial",
+            "apnea", "taquipnea_severa", "bradiapnea", "tos_con_sangre",
+            "hemoptisis_abundante", "obstruccion_via_aerea", "respiracion_paradojica",
+            "uso_musculos_accesorios", "tiraje_intercostal", "asfixia",
+            "perdida_conciencia", "convulsiones", "estado_epileptico", "coma",
+            "confusion_severa", "desorientacion_completa", "perdida_vision_subita",
+            "vision_doble_subita", "debilidad_facial_subita", "paralisis_facial",
+            "dificultad_hablar_subita", "afasia_subita", "paralisis_miembros",
+            "hemiparesia_subita", "hemiplejia", "parestesias_severas",
+            "cefalea_thunderclap", "cefalea_peor_vida", "rigidez_nuca",
+            "fotofobia_severa", "perdida_equilibrio_subita", "vertigo_severo",
+            "diplopia", "ptosis_subita", "pupilas_desiguales", "nistagmo",
+            "ataxia_severa", "disartria_severa", "perdida_memoria_subita",
+            "dolor_abdominal_severo", "vomito_sangre", "hematemesis", "melena",
+            "hematoquecia", "sangrado_rectal_abundante", "vomito_proyectil",
+            "vomito_bilioso", "distension_abdominal_severa", "abdomen_rigido",
+            "defensa_abdominal", "rebote_abdominal", "murphy_positivo",
+            "rovsing_positivo", "mcburney_dolor", "diarrea_sanguinolenta",
+            "deshidratacion_severa", "ictericia_subita", "coluria",
+            "acolia", "ascitis_severa",
+            "sangrado_abundante", "hemorragia_arterial", "hemorragia_venosa",
+            "shock_hipovolemico", "palidez_extrema", "llenado_capilar_lento",
+            "pulso_debil", "hipotension_severa", "trauma_craneal",
+            "fractura_expuesta", "deformidad_osea", "hematoma_grande",
+            "equimosis_extensas", "penetracion_torax", "penetracion_abdomen",
+            "herida_cuello", "amputacion_traumatica",
+            "hipoglucemia_severa", "hiperglucemia_extrema", "cetoacidosis",
+            "coma_diabetico", "deshidratacion_extrema", "hiponatremia_severa",
+            "hipernatremia_severa", "hipopotasemia_severa", "hiperpotasemia_severa",
+            "acidosis_metabolica", "alcalosis_metabolica", "hipocalcemia_severa",
+            "hipercalcemia_severa", "uremia", "insuficiencia_renal_aguda"
+            "fiebre_muy_alta", "hipertermia", "hipotermia_severa", "sepsis",
+            "shock_septico", "meningitis_signos", "encefalitis_signos",
+            "petequias_generalizadas", "purpura_fulminans", "celulitis_necrotizante",
+            "fascitis_necrotizante", "gangrena", "absceso_cerebral_signos",
+            "intoxicacion_severa", "sobredosis", "miosis_extrema", "midriasis_extrema",
+            "convulsiones_toxicas", "coma_toxico", "depresion_respiratoria_toxica",
+            "hipertermia_toxica", "rabdomiolisis", "sindrome_serotoninergico",
+            "sindrome_anticolinergico", "sindrome_colinergico",
+            "ideacion_suicida_activa", "intento_suicidio", "agitacion_psicomotriz",
+            "agresividad_extrema", "psicosis_aguda", "episodio_maniaco_severo",
+            "catatonia", "delirium_tremens", "alucinaciones_severas",
+            "paranoia_extrema", "desorganizacion_severa",
+            "perdida_vision_subita", "dolor_ocular_severo", "vision_halos",
+            "glaucoma_agudo_signos", "desprendimiento_retina_signos",
+            "cuerpo_extrano_ocular", "quemadura_ocular", "trauma_ocular",
+            "obstruccion_via_aerea_superior", "estridor_inspiratorio",
+            "disfagia_severa", "odinofagia_severa", "trismus", "angioedema",
+            "epistaxis_severa", "cuerpo_extrano_via_aerea", "trauma_facial_severo",
+            "anuria", "hematuria_severa", "dolor_lumbar_colico", "retencion_urinaria",
+            "priapismo", "torsion_testicular_signos", "trauma_genital",
+            "sangrado_vaginal_abundante", "dolor_pelvico_severo", "embarazo_ectopico_signos",
+            "preeclampsia_signos", "eclampsia", "desprendimiento_placenta_signos",
+            "parto_prematuro", "prolapso_cordon", "distocia_hombros",
+            "llanto_inconsolable", "letargia_infantil", "fontanela_abombada",
+            "fontanela_hundida", "cianosis_peribucal", "tiraje_subcostal",
+            "estridor_pediatrico", "apnea_neonatal", "convulsion_febril_compleja",
+            "deshidratacion_pediatrica_severa", "invaginacion_intestinal_signos",
+            "caida_ancianos", "confusion_aguda_anciano", "incontinencia_subita",
+            "perdida_funcional_subita", "sindrome_confusional_agudo",
+            "hipotermia_accidental", "ulceras_presion_infectadas",
+            "quemaduras_extensas", "quemaduras_segundo_grado", "quemaduras_tercer_grado",
+            "sindrome_stevens_johnson", "necrolisis_epidermica_toxica",
+            "angioedema_hereditario", "urticaria_generalizada", "anafilaxia_cutanea",
+            "anafilaxia", "shock_anafilactico", "broncoespasmo_severo",
+            "angioedema_laringeo", "urticaria_gigante", "hipotension_anafilactica",
+            "edema_glotis", "prurito_generalizado_severo"
         }
         
         # Mapeo de síntomas a condiciones
