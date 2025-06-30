@@ -35,6 +35,37 @@ chmod +x setup.sh run_app.sh
 # Ejecutar aplicación
 ./run_app.sh
 ```
+## 🧠 Descarga del Modelo LLaMA (GGUF)
+Este proyecto utiliza un modelo LLaMA en formato .gguf compatible con llama-cpp-python.
+
+### ✅ Versión recomendada
+Modelo: LLaMA 2 7B Chat
+
+Formato: GGUF
+
+Cuantización recomendada: Q4_K_M
+
+Tamaño aproximado: ~3.8 GB
+
+### 📥 Enlace de descarga directa
+Puedes descargarlo desde Hugging Face:
+
+👉 [LLaMA 2 7B Chat – GGUF (Q4_K_M)](https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/blob/main/llama-2-7b-chat.Q4_K_M.gguf)
+
+⚠️ Solo necesitas darle clic a downaload, te pueden pedir tener una cuenta gratuita en Hugging Face y aceptar los términos de uso del modelo LLaMA 2 para poder acceder.
+
+📁 Ruta recomendada
+Guarda el archivo descargado en una carpeta local, por ejemplo:
+
+```bash
+C:\Users\TU_USUARIO\llama_models\llama-2-7b-chat.Q4_K_M.gguf
+```
+Luego, actualiza tu archivo .env o config.py:
+
+env
+```bash
+MODEL_PATH=C:\Users\TU_USUARIO\llama_models\llama-2-7b-chat.Q4_K_M.gguf
+```
 
 ## 🔧 Qué Hacen los Scripts
 
@@ -75,6 +106,19 @@ chmod +x setup.sh run_app.sh
 ### Windows
 - Python 3.8+ instalado desde [python.org](https://python.org)
 - pip incluido con Python
+- Visual Studio Build Tools (compilador de C++ requerido para llama-cpp-python)
+
+### 🔧 Instalación de Build Tools
+Si no los tienes, instálalos desde:
+
+👉 [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+
+Durante la instalación:
+
+- Marca “C++ build tools”
+- Asegúrate de que esté seleccionado “Windows 10 SDK” o superior
+- Espera a que se complete la instalación
+- Reinicia tu consola (CMD o PowerShell)
 
 ### Linux
 - Python 3.8+ y pip3

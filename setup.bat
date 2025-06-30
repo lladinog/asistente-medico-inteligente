@@ -91,16 +91,23 @@ if not exist "config.py" (
     echo IMPORTANTE: Edita config.py y añade tu API key de OpenAI
 )
 
-:: Crear archivo .env si no existe
+:: Crear archivo .env
 if not exist ".env" (
-    echo 📝 Creando archivo .env...
-    echo # Configuración del Asistente Médico Inteligente > .env
-    echo OPENAI_API_KEY=tu_clave_api_de_openai_aqui >> .env
-    echo DEBUG=True >> .env
-    echo HOST=127.0.0.1 >> .env
-    echo PORT=8050 >> .env
-    echo  IMPORTANTE: Edita .env y añade tu API key de OpenAI
+    echo Creando archivo .env...
+    (
+        echo # Configuración del frontend
+        echo DEBUG=true
+        echo HOST=127.0.0.1
+        echo PORT=8000
+        echo.
+        echo # Configuración general de los asistentes
+        echo MODEL_PATH=C:/Users/tu_usuario/llama3/llama-2-7b-chat.Q4_K_M.gguf
+        echo LLAMA_N_THREADS=%CORES%
+        echo LLAMA_N_BATCH=256
+        echo LLAMA_N_CTX=2048
+    ) > .env
 )
+
 
 echo.
 echo ========================================
@@ -113,6 +120,18 @@ echo    2. Ejecuta la app: python app/main.py
 echo    3. Abre tu navegador en: http://127.0.0.1:8050
 echo.
 echo 📚 Para más información, consulta el README.md
+echo.
+
+:: Instrucciones adicionales para el usuario
+echo.
+echo ⚠️  Si usas Windows, asegúrate de tener instalado Visual Studio Build Tools:
+echo    https://visualstudio.microsoft.com/visual-cpp-build-tools/
+echo.
+echo 💾 Descarga el modelo GGUF (recomendado):
+echo    Llama 2 7B Chat Q4_K_M (compatible con llama.cpp):
+echo    https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/blob/main/llama-2-7b-chat.Q4_K_M.gguf
+echo.
+echo 👉 Guarda el archivo en: C:/Users/tu_usuario/llama3/
 echo.
 echo ⚠️  RECUERDA: Edita config.py o .env con tu API key de OpenAI
 echo.

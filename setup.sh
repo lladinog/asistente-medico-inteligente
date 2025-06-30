@@ -148,24 +148,39 @@ fi
 echo
 print_info "⚙️  Configurando el proyecto..."
 
+# Crear archivo config.py si no existe
 if [ ! -f "config.py" ]; then
     print_info "📝 Creando archivo de configuración..."
     cp config.example.py config.py
-    print_warning "⚠️  IMPORTANTE: Edita config.py y añade tu API key de OpenAI"
+    print_warning "⚠️  Edita config.py si deseas personalizar la configuración"
 fi
 
+# Detectar número de núcleos del sistema
+CPU_CORES=$(getconf _NPROCESSORS_ONLN)
+
+# Crear archivo .env si no existe
 if [ ! -f ".env" ]; then
     print_info "📝 Creando archivo .env..."
     cat > .env << EOF
 # Configuración del Asistente Médico Inteligente
-OPENAI_API_KEY=tu_clave_api_de_openai_aqui
+
+# Frontend
 DEBUG=True
 HOST=127.0.0.1
 PORT=8050
-EOF
-    print_warning "⚠️  IMPORTANTE: Edita .env y añade tu API key de OpenAI"
-fi
 
+# Configuración llama.cpp
+MODEL_PATH=RUTA/AL/MODELO/llama-2-7b-chat.Q4_K_M.gguf
+LLAMA_N_THREADS=$CPU_CORES
+LLAMA_N_BATCH=256
+LLAMA_N_CTX=2048
+EOF
+
+    print_warning "⚠️  Edita .env y cambia MODEL_PATH por la ruta real de tu modelo GGUF"
+    print_warning "ℹ️  Si no tienes el modelo, puedes descargarlo desde:"
+    echo "     https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF"
+    echo "     Versión recomendada: llama-2-7b-chat.Q4_K_M.gguf"
+fi
 echo
 echo "========================================"
 print_message "✅ SETUP COMPLETADO EXITOSAMENTE"
