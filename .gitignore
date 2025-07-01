@@ -218,6 +218,10 @@ config.py
 logs/
 *.log
 
+# Archivos de base de datos
+historiales/
+*.json
+
 # Scripts generados automáticamente
 run_app.sh
 run_app.bat

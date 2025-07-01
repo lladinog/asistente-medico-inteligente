@@ -22,7 +22,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
 sys.path.insert(0, root_dir)
 
-from agents.conversation import Conversation
+from agents.utils.conversation import Conversation
 
 class MedicalPDFAnalysisAgent:
     """Agente especializado en análisis de PDFs de exámenes médicos"""

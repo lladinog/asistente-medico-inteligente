@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableWithMessageHistory
 from langchain_community.llms import LlamaCpp
-from agents.conversation import Conversation
-from agents.medical_diagnosis_agent import MedicalDiagnosisAgent
+from agents.utils.conversation import Conversation
+from modelos.medical_diagnosis_agent import MedicalDiagnosisAgent
 
 os.environ["LLAMA_LOG_LEVEL"] = "WARN"  # Puede ser: "ERROR", "WARN", "INFO", "DEBUG"
 

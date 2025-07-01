@@ -1,0 +1,23 @@
+PERFIL TIROIDEO
+Paciente: Carmen López
+Fecha: 22/01/2024
+Médico: Dr. Roberto Silva
+
+RESULTADOS:
+TSH: 8.5 μIU/mL (Normal: 0.4-4.0)
+T4 Libre: 0.8 ng/dL (Normal: 0.8-1.8)
+T3 Libre: 2.1 pg/mL (Normal: 2.3-4.2)
+Anticuerpos anti-TPO: 450 IU/mL (Normal: <35)
+Anticuerpos anti-TG: 280 IU/mL (Normal: <40)
+
+OBSERVACIONES:
+- TSH elevada (hipotiroidismo)
+- T4 Libre en límite inferior
+- T3 Libre ligeramente bajo
+- Anticuerpos anti-tiroideos elevados (tiroiditis autoinmune)
+
+RECOMENDACIONES:
+- Confirmar hipotiroidismo subclínico
+- Evaluar síntomas de hipotiroidismo
+- Considerar tratamiento con levotiroxina
+- Seguimiento endocrinológico 

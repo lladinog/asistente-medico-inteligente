@@ -1,0 +1,37 @@
+QUÍMICA SANGUÍNEA
+Paciente: Juan Pérez
+Fecha: 18/01/2024
+Médico: Dra. Ana Martínez
+
+RESULTADOS:
+Glucosa: 95 mg/dL (Normal: 70-100)
+Urea: 45 mg/dL (Normal: 7-20)
+Creatinina: 1.8 mg/dL (Normal: 0.6-1.2)
+Ácido úrico: 8.5 mg/dL (Normal: 3.4-7.0)
+Colesterol total: 280 mg/dL (Normal: <200)
+HDL: 35 mg/dL (Normal: >40)
+LDL: 180 mg/dL (Normal: <100)
+Triglicéridos: 350 mg/dL (Normal: <150)
+Bilirrubina total: 1.2 mg/dL (Normal: 0.3-1.2)
+Bilirrubina directa: 0.3 mg/dL (Normal: 0.1-0.3)
+AST (TGO): 45 U/L (Normal: 10-40)
+ALT (TGP): 55 U/L (Normal: 7-56)
+Fosfatasa alcalina: 120 U/L (Normal: 44-147)
+Proteínas totales: 7.2 g/dL (Normal: 6.0-8.3)
+Albúmina: 4.1 g/dL (Normal: 3.4-5.0)
+Sodio: 142 mEq/L (Normal: 135-145)
+Potasio: 4.2 mEq/L (Normal: 3.5-5.0)
+Cloro: 102 mEq/L (Normal: 96-106)
+
+OBSERVACIONES:
+- Urea y creatinina elevadas (insuficiencia renal leve)
+- Ácido úrico elevado (hiperuricemia)
+- Dislipidemia mixta (colesterol y triglicéridos elevados)
+- Transaminasas ligeramente elevadas
+- Función hepática preservada
+
+RECOMENDACIONES:
+- Evaluar función renal
+- Control de dieta para dislipidemia
+- Evaluar hígado graso
+- Control de ácido úrico 

@@ -1,0 +1,29 @@
+HEMOGRAMA COMPLETO
+Paciente: María González
+Fecha: 20/01/2024
+Médico: Dr. Carlos Rodríguez
+
+RESULTADOS:
+Hemoglobina: 11.5 g/dL (Normal: 13.5-17.5)
+Hematocrito: 35% (Normal: 40-50%)
+Leucocitos: 12,500/μL (Normal: 4,500-11,000)
+Neutrófilos: 8,500/μL (Normal: 2,000-7,500)
+Linfocitos: 3,200/μL (Normal: 1,000-4,000)
+Monocitos: 600/μL (Normal: 200-800)
+Eosinófilos: 150/μL (Normal: 50-500)
+Basófilos: 50/μL (Normal: 0-200)
+Plaquetas: 250,000/μL (Normal: 150,000-450,000)
+VCM: 85 fL (Normal: 80-100)
+HCM: 28 pg (Normal: 27-32)
+CHCM: 33% (Normal: 32-36%)
+
+OBSERVACIONES:
+- Hemoglobina y hematocrito ligeramente bajos (anemia leve)
+- Leucocitos elevados (leucocitosis)
+- Neutrófilos elevados (neutrofilia)
+- Resto de parámetros dentro de rangos normales
+
+RECOMENDACIONES:
+- Evaluar causa de anemia
+- Considerar infección bacteriana por neutrofilia
+- Repetir hemograma en 2 semanas 
