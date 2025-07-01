@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 from tensorflow.keras.models import load_model
 from cv2 import imread, resize
@@ -27,6 +26,5 @@ def workflow(image_path):
     img_preprocessed = preprocess_image(image_path)
     pred = model.predict(img_preprocessed)
 
-    # Mostrar predicción
-    predicted_class = np.argmax(pred, axis=1)[0]
-    print(f"Predicción: Clase {classes[predicted_class]} - Probabilidades: {pred[0]}")
+    predicted_class = np.argmax(pred, axis=1)[-1]
+    return classes[predicted_class], pred[-1] # Clase predicha y probabilidad

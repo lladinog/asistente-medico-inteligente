@@ -3,7 +3,6 @@ import torch.nn as nn
 from torchvision import transforms
 from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 from PIL import Image
-import sys
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -26,7 +25,7 @@ def load_model(path='model.pt'):
 
 def preprocess_image(image_path):
     image = Image.open(image_path).convert('RGB')
-    return transform(image).unsqueeze(0)  # batch de tamaño 1
+    return transform(image).unsqueeze(0)
 
 
 def workflow(image_path, class_names=["Grado 1", "Grado 2", "Grado 3"]):
@@ -40,7 +39,4 @@ def workflow(image_path, class_names=["Grado 1", "Grado 2", "Grado 3"]):
         predicted_idx = torch.argmax(probs, dim=1).item()
         confidence = probs[0][predicted_idx].item()
 
-    if class_names:
-        print(f"Predicción: {class_names[predicted_idx]} ({confidence:.2%} de confianza)")
-    else:
-        print(f"Índice predicho: {predicted_idx} ({confidence:.2%} de confianza)")
+        return class_names[predicted_idx], confidence, probs # Grado clasificado, confidencia y vector de probabilidades
