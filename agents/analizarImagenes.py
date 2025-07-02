@@ -3,11 +3,7 @@ from typing import Optional, Dict
 from dotenv import load_dotenv
 
 from agents.agente import Agente
-from vision import (
-    analizar_tumor_cerebral,
-    analizar_quemaduras,
-    analizar_radiografia_torax,
-    analizar_enfermedad_piel)
+
 
 class AgenteAnalisisImagenes(Agente):
     def __init__(self):
@@ -32,6 +28,12 @@ class AgenteAnalisisImagenes(Agente):
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "prompts",
             "analisis_imagenes.txt"
+        )
+        from vision import (
+            analizar_tumor_cerebral,
+            analizar_quemaduras,
+            analizar_radiografia_torax,
+            analizar_enfermedad_piel
         )
 
         super().__init__(

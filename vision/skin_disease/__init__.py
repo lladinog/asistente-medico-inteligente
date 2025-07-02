@@ -1,4 +1,4 @@
-from inference import workflow as SkinDiseaseProcess
+from vision.skin_disease.inference import workflow as SkinDiseaseProcess
 __all__ = [
     "SkinDiseaseProcess"
 ]

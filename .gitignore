@@ -225,3 +225,5 @@ historiales/
 # Scripts generados automáticamente
 run_app.sh
 run_app.bat
+
+llama-2-7b-chat.Q4_K_M.gguf

@@ -204,7 +204,7 @@ cat > run_app.sh << 'EOF'
 #!/bin/bash
 echo "🤖 Iniciando Asistente Médico Inteligente..."
 source venv/bin/activate
-python app/main.py
+python app/app_modular.py
 EOF
 
 chmod +x run_app.sh

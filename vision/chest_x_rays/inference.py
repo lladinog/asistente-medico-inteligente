@@ -6,8 +6,8 @@ from keras.models import Sequential
 from keras.preprocessing.image import load_img, img_to_array
 
 IMG_SIZE = (128, 128)
-WEIGHTS_PATH = 'model.hdf5'
-CSV_PATH = './Data.csv'
+WEIGHTS_PATH = '/workspaces/asistente-medico-inteligente/vision/chest_x_rays/model.hdf5'
+CSV_PATH = '/workspaces/asistente-medico-inteligente/vision/chest_x_rays/Data.csv'
 MIN_CASES = 1000
 
 # === 1. Reconstruir lista de clases ===
