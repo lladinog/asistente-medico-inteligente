@@ -46,11 +46,17 @@ class Orquestador:
                 r'\b(cerca|cercano|próximo|proximo)\b',
                 r'\b(buscar|encontrar|localizar)\b.*\b(médico|doctor|hospital|clínica)\b'
             ],
-            FuncionalidadMedica.CONTACTO_MEDICO.value: [
+             FuncionalidadMedica.CONTACTO_MEDICO.value: [
                 r'\b(contactar|llamar|comunicar|hablar)\b.*\b(médico|doctor)\b',
+                r'\b(segunda\s*opinión|segunda\s*opinion|opinión\s*médica|opinion\s*medica)\b',
+                r'\b(consultar\s*médico|consultar\s*doctor|consulta\s*médica|consulta\s*medica)\b',
+                r'\b(enviar\s*caso|enviar\s*a\s*médico|enviar\s*a\s*doctor)\b',
+                r'\b(necesito\s*médico|necesito\s*doctor|quiero\s*médico|quiero\s*doctor)\b',
                 r'\b(cita|consulta|appointment)\b',
                 r'\b(teléfono|telefono|número|numero)\b.*\b(médico|doctor)\b',
-                r'\b(emergencia|urgente|urgencia)\b'
+                r'\b(emergencia|urgente|urgencia)\b',
+                r'\b(derivar|referir|remitir)\b.*\b(médico|doctor|especialista)\b',
+                r'\b(evaluación\s*médica|evaluacion\s*medica|revisión\s*médica|revision\s*medica)\b'
             ],
             FuncionalidadMedica.EXPLICACION.value: [
                 r'\b(qué\s*es|que\s*es|explicar|explicación|explicacion)\b',
