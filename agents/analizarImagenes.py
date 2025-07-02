@@ -3,6 +3,11 @@ from typing import Optional, Dict
 from dotenv import load_dotenv
 
 from agents.agente import Agente
+from vision import (
+    analizar_tumor_cerebral,
+    analizar_quemaduras,
+    analizar_radiografia_torax,
+    analizar_enfermedad_piel)
 
 class AgenteAnalisisImagenes(Agente):
     def __init__(self):
@@ -32,7 +37,12 @@ class AgenteAnalisisImagenes(Agente):
         super().__init__(
             config=config,
             model_config=model_config,
-            system_prompt_path=prompt_path
+            system_prompt_path=prompt_path,
+            tools=[analizar_tumor_cerebral,
+                   analizar_quemaduras,
+                   analizar_radiografia_torax,
+                   analizar_enfermedad_piel
+                   ]
         )
     
     def iniciar_interaccion(self, session_id: str, mensaje: str) -> Optional[Dict]:
@@ -41,8 +51,22 @@ class AgenteAnalisisImagenes(Agente):
         return None
     
     def preguntar(self, session_id: str, pregunta: str, metadata: Optional[Dict] = None) -> Dict:
-        # Respuesta temporal hasta implementar visión por computadora
-        return {
-            "output": "🔍 Función de análisis de imágenes en desarrollo. Por ahora, describa la imagen en texto para recibir ayuda.",
-            "metadata": {"tipo": "placeholder"}
-        }
+        self._ensure_llm()
+        os.makedirs("historiales", exist_ok=True)
+
+        # Si metadata contiene la ruta de imagen, usar herramientas directamente
+        if metadata and "image_path" in metadata:
+            resultados = []
+            for herramienta in self.tools:
+                resultados.append(herramienta.run(metadata["image_path"]))
+            return {
+                "output": "\n\n".join(resultados),
+                "metadata": {"tipo": "inferencia_imagen"}
+            }
+
+        # Caso estándar de conversación LLM
+        respuesta = self.agente.invoke(
+            {"input": pregunta},
+            config={"configurable": {"session_id": session_id}}
+        )
+        return respuesta
