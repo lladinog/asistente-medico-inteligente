@@ -22,6 +22,9 @@ class Orquestador:
         self.agentes = {}
         self.agente_clasificador = self._inicializar_agente_clasificador()
         self.frontend_callback = frontend_callback or self._default_callback
+
+        self.sesiones_activas = {}  # {session_id: {"funcionalidad": str, "ultimo_agente": Agente, "timestamp": float}}
+        self.timeout_sesion = 3600  # 1 hora de timeout por defecto
         
         # Patrones para clasificación por palabras clave
         self.patrones_clasificacion = {
@@ -57,6 +60,70 @@ class Orquestador:
             ]
         }
     
+    def _limpiar_sesiones_expiradas(self):
+        """Limpia sesiones que han expirado"""
+        tiempo_actual = time.time()
+        sesiones_expiradas = []
+        
+        for session_id, info in self.sesiones_activas.items():
+            if tiempo_actual - info["timestamp"] > self.timeout_sesion:
+                sesiones_expiradas.append(session_id)
+        
+        for session_id in sesiones_expiradas:
+            del self.sesiones_activas[session_id]
+            print(f"[SESION] Sesión expirada: {session_id}")
+    
+    def _actualizar_sesion(self, session_id: str, funcionalidad: str, agente: Agente):
+        """Actualiza o crea una sesión activa"""
+        self.sesiones_activas[session_id] = {
+            "funcionalidad": funcionalidad,
+            "ultimo_agente": agente,
+            "timestamp": time.time()
+        }
+        print(f"[SESION] Sesión actualizada: {session_id} -> {funcionalidad}")
+    
+    def _obtener_sesion(self, session_id: str) -> Optional[Dict]:
+        """Obtiene información de una sesión activa"""
+        self._limpiar_sesiones_expiradas()
+        return self.sesiones_activas.get(session_id)
+    
+    def _es_pregunta_contextual(self, mensaje: str) -> bool:
+        """
+        Determina si el mensaje es una pregunta contextual que debería 
+        continuar con el mismo agente de la sesión anterior.
+        """
+        # Palabras que indican continuidad en la conversación
+        palabras_contextuales = [
+            r'\b(y\s*)?qué\s*más\b',
+            r'\b(y\s*)?además\b',
+            r'\b(y\s*)?también\b',
+            r'\bexplica\s*mejor\b',
+            r'\bmás\s*detalles?\b',
+            r'\by\s*eso\s*qué\s*significa\b',
+            r'\bpero\b',
+            r'\bentonces\b',
+            r'\by\s*si\b',
+            r'\by\s*cómo\b',
+            r'\by\s*por\s*qué\b',
+            r'\by\s*cuándo\b',
+            r'\bgracias.*y\b',
+            r'\bokay.*y\b',
+            r'\bentendido.*y\b'
+        ]
+        
+        mensaje_lower = mensaje.lower().strip()
+        
+        # Verificar patrones contextuales
+        for patron in palabras_contextuales:
+            if re.search(patron, mensaje_lower):
+                return True
+        
+        # Verificar si es una pregunta muy corta (probablemente contextual)
+        if len(mensaje.split()) <= 3 and any(palabra in mensaje_lower for palabra in ['qué', 'cómo', 'por qué', 'cuándo', 'dónde']):
+            return True
+        
+        return False
+    
     def _default_callback(self, funcionalidad: str):
         """Callback por defecto si no se proporciona uno"""
         print(f"[FRONTEND] Cambiando a funcionalidad: {funcionalidad}")
@@ -79,9 +146,9 @@ class Orquestador:
         clasificador_config = {
             "model_path": os.getenv("MODEL_PATH"),
             "n_threads": int(os.getenv("LLAMA_N_THREADS", os.cpu_count() or 8)),
-            "n_ctx": 512,  # Reducido para clasificación rápida
-            "temperature": 0.0,  # Determinístico para clasificación
-            "max_tokens": 5  # Solo necesitamos una palabra
+            "n_ctx": 5000, 
+            "temperature": 0.0,
+            "max_tokens": 5  
         }
 
         prompt_path = os.path.join(
