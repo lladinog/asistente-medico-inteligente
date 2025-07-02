@@ -46,11 +46,15 @@ class AgenteAnalisisImagenes(Agente):
                    analizar_enfermedad_piel
                    ]
         )
-    
-    def iniciar_interaccion(self, session_id: str, mensaje: str) -> Optional[Dict]:
+
+    def iniciar_interaccion(self, session_id: str, imagen_path: str) -> Optional[Dict]:
         """Inicia la interacción con el agente de análisis de imágenes"""
         print(f"[ANALISIS_IMAGENES] Iniciando interacción para sesión {session_id}")
-        return None
+        return {
+            "tipo": "analisis_imagenes",
+            "session_id": session_id,
+            "image_path": imagen_path
+        }
     
     def preguntar(self, session_id: str, pregunta: str, metadata: Optional[Dict] = None) -> Dict:
         self._ensure_llm()
@@ -61,10 +65,11 @@ class AgenteAnalisisImagenes(Agente):
             resultados = []
             for herramienta in self.tools:
                 resultados.append(herramienta.run(metadata["image_path"]))
-            return {
-                "output": "\n\n".join(resultados),
-                "metadata": {"tipo": "inferencia_imagen"}
-            }
+            respuesta = self.agente.invoke(
+                {"input": pregunta, "results": resultados},
+                config={"configurable": {"session_id": session_id}}
+            )
+            return respuesta
 
         # Caso estándar de conversación LLM
         respuesta = self.agente.invoke(
