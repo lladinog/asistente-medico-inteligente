@@ -9,7 +9,7 @@ class Conversation(FileChatMessageHistory):
     def __init__(
         self,
         file_path: str,
-        max_context_tokens: int = 768,
+        max_context_tokens: int = 2000,
         token_buffer: int = 128,
         max_messages: Optional[int] = None,
         tokenizer: Optional[callable] = None,
