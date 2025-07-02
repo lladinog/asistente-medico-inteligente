@@ -1,0 +1,1 @@
+# Estilos centralizados de la aplicación 

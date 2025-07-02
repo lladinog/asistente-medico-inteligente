@@ -9,19 +9,26 @@ from agents.utils.funcionalidades import FuncionalidadMedica
 from agents.agente import Agente
 
 class Orquestador:
-    def __init__(self, config: Dict, model_config: Dict, frontend_callback=None):
+    def __init__(self):
         """
         Inicializa el orquestador con configuración y modelos.
-        
-        Args:
-            config: Configuración general del sistema
-            model_config: Configuración de los modelos LLM
         """
+        # Configuración inicial
+        config = {
+            "nombre_app": "Asistente Médico Rural",
+            "tipo": "Orquestador",
+        }
+
+        model_config = {
+            "model_path": os.getenv("MODEL_PATH"),
+            "n_ctx": 2048,
+            "n_threads": int(os.getenv("LLAMA_N_THREADS", os.cpu_count() or 8))
+        }
+        
         self.config = config
         self.model_config = model_config
         self.agentes = {}
         self.agente_clasificador = self._inicializar_agente_clasificador()
-        self.frontend_callback = frontend_callback or self._default_callback
 
         self.sesiones_activas = {}  # {session_id: {"funcionalidad": str, "ultimo_agente": Agente, "timestamp": float}}
         self.timeout_sesion = 3600  # 1 hora de timeout por defecto
@@ -130,31 +137,24 @@ class Orquestador:
         
         return False
     
-    def _default_callback(self, funcionalidad: str):
-        """Callback por defecto si no se proporciona uno"""
-        print(f"[FRONTEND] Cambiando a funcionalidad: {funcionalidad}")
-    
-    def _cambiar_interfaz(self, funcionalidad: str):
-        """Notifica al frontend para cambiar de página"""
-        if self.frontend_callback:
-            self.frontend_callback(funcionalidad)
-        
     def _inicializar_agente_clasificador(self) -> Agente:
         """
         Inicializa el agente especializado en clasificar intenciones.
         Este agente debe ser rápido y ligero.
         """
         config = {
-            "nombre": "Agente clasificador",
-            "tipo": "clasificador"
+        "nombre": "Agente orquestador",
+        "tipo": "Clasificador"
         }
 
         clasificador_config = {
-            "model_path": os.getenv("MODEL_PATH"),
-            "n_threads": int(os.getenv("LLAMA_N_THREADS", os.cpu_count() or 8)),
-            "n_ctx": 5000, 
-            "temperature": 0.0,
-            "max_tokens": 5  
+            "model_path": self.model_config.get("model_path"),
+            "n_threads": self.model_config.get("n_threads", 8),
+            "model_path": self.model_config.get("model_path"),
+            "n_threads": self.model_config.get("n_threads", 8),
+            "n_ctx": 1024,
+            "temperature": 0.1,
+            "max_tokens": 10
         }
 
         prompt_path = os.path.join(
@@ -172,10 +172,6 @@ class Orquestador:
     def registrar_agente(self, funcionalidad: FuncionalidadMedica, agente: Agente):
         """
         Registra un agente para una funcionalidad específica.
-        
-        Args:
-            funcionalidad: Enum de la funcionalidad médica
-            agente: Instancia del agente a registrar
         """
         self.agentes[funcionalidad.value] = agente
     
@@ -200,6 +196,24 @@ class Orquestador:
         
         return None
     
+    def _detectar_funcionalidad_directa(self, mensaje: str) -> Optional[str]:
+        """
+        Si el mensaje es un número válido o el nombre exacto de una funcionalidad,
+        retorna el valor de la funcionalidad. Si no, retorna None.
+        """
+        mensaje_limpio = mensaje.strip().lower()
+        # Por número
+        funcionalidades = list(FuncionalidadMedica)
+        if mensaje_limpio.isdigit():
+            idx = int(mensaje_limpio) - 1
+            if 0 <= idx < len(funcionalidades):
+                return funcionalidades[idx].value
+        # Por nombre exacto
+        for funcionalidad in funcionalidades:
+            if mensaje_limpio == funcionalidad.value:
+                return funcionalidad.value
+        return None
+
     def _determinar_funcionalidad(self, mensaje: str) -> str:
         """
         Determina la funcionalidad solicitada por el usuario usando un enfoque híbrido.
@@ -210,6 +224,12 @@ class Orquestador:
         Returns:
             str: Identificador de la funcionalidad detectada
         """
+        # Paso 0: Intentar detección directa por número o nombre exacto
+        funcionalidad_directa = self._detectar_funcionalidad_directa(mensaje)
+        if funcionalidad_directa:
+            print(f"[ORQUESTADOR] Funcionalidad detectada directamente: {funcionalidad_directa}")
+            return funcionalidad_directa
+
         # Paso 1: Intentar clasificación por patrones (más rápido y confiable)
         funcionalidad_patron = self._clasificar_por_patrones(mensaje)
         if funcionalidad_patron:
@@ -307,7 +327,6 @@ class Orquestador:
             # Clasificación normal
             funcionalidad = self._determinar_funcionalidad(mensaje_usuario)
         
-        self._cambiar_interfaz(funcionalidad)
         print(f"[ORQUESTADOR] Funcionalidad detectada: {funcionalidad}")
         
         # Obtener agente correspondiente
@@ -330,7 +349,13 @@ class Orquestador:
             if hasattr(agente, 'iniciar_interaccion'):
                 metadata = agente.iniciar_interaccion(session_id, mensaje_usuario)
         except Exception as e:
-            print(f"[WARNING] Fallo en preprocesamiento: {str(e)}. Continuando sin metadata.")
+            # Si falla el preprocesamiento, delegar al agente de diagnóstico
+            print(f"[ERROR] Fallo en preprocesamiento: {str(e)}. Usando agente de diagnóstico por defecto.")
+            funcionalidad = FuncionalidadMedica.DIAGNOSTICO.value
+            agente = self.agentes[funcionalidad]
+            metadata = None
+            
+            self._notificar_error(f"Fallo en preprocesamiento: {str(e)}")
         
         # Paso 2: Pregunta principal
         try:
@@ -362,15 +387,13 @@ class Orquestador:
             }
     
     def _notificar_error(self, mensaje: str):
-        """Notifica al frontend sobre errores de procesamiento."""
+        """Notifica sobre errores de procesamiento."""
+        """Notifica sobre errores de procesamiento."""
         print(f"[ERROR] {mensaje}")
     
     def _generar_session_id(self) -> str:
         """
         Genera un nuevo ID de sesión único.
-        
-        Returns:
-            str: Nuevo session_id
         """
         return f"sess_{int(time.time())}_{os.urandom(4).hex()}"
     
@@ -378,15 +401,6 @@ class Orquestador:
                                 patient_context: str = "", patient_level: str = "intermedio") -> Dict:
         """
         Procesa un archivo médico (PDF) enviado desde el frontend.
-        
-        Args:
-            session_id: ID de sesión
-            archivo_path: Ruta al archivo subido
-            patient_context: Contexto del paciente
-            patient_level: Nivel de explicación (simple/intermedio/detallado)
-            
-        Returns:
-            Dict: Resultado del procesamiento
         """
         if not session_id:
             session_id = self._generar_session_id()
@@ -466,13 +480,6 @@ class Orquestador:
     def continuar_conversacion_examenes(self, session_id: str, pregunta: str) -> Dict:
         """
         Continúa una conversación sobre exámenes médicos previamente analizados.
-        
-        Args:
-            session_id: ID de sesión con análisis previo
-            pregunta: Pregunta adicional del usuario
-            
-        Returns:
-            Dict: Respuesta contextualizada
         """
         funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.value
         agente = self.agentes.get(funcionalidad)

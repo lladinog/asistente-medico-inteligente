@@ -1,6 +1,6 @@
 """
 Aplicación principal completamente modular
-Utiliza componentes, estilos y callbacks separados
+Utiliza componentes, estilos y callbacks separados para todos los agentes
 """
 
 import os
@@ -12,7 +12,11 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 from agents.orquestador import Orquestador, FuncionalidadMedica
 from agents.diagnostico import AgenteDiagnostico
+from agents.analizarImagenes import AgenteAnalisisImagenes
+from agents.interpretacionExamenes import AgenteInterpretacionExamenes
 from agents.explicacion import AgenteExplicacionMedica
+from agents.busqueda import AgenteBusquedaCentros
+from agents.contactoMedico import AgenteContactoMedico
 
 # Importar componentes
 from components.sidebar import create_sidebar_component
@@ -30,34 +34,38 @@ from callbacks.navigation import register_navigation_callbacks
 def create_app():
     """Crea y configura la aplicación Dash"""
     
-    # Configuración inicial
-    config = {
-        "nombre_app": "Asistente Médico Rural",
-        "estilo": dbc.themes.DARKLY
-    }
+    # Inicializar orquestador sin frontend_callback
+    orquestador = Orquestador()
 
-    model_config = {
-        "model_path": "modelos/llama-medical.bin",
-        "n_ctx": 2048,
-        "n_threads": 8
-    }
-
-    # Inicializar orquestador
-    orquestador = Orquestador(config, model_config)
-
-    # Registrar agentes
+    # Registrar todos los agentes disponibles
     orquestador.registrar_agente(
         FuncionalidadMedica.DIAGNOSTICO,
         AgenteDiagnostico()
     )
     orquestador.registrar_agente(
+        FuncionalidadMedica.ANALISIS_IMAGENES,
+        AgenteAnalisisImagenes()
+    )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.INTERPRETACION_EXAMENES,
+        AgenteInterpretacionExamenes()
+    )
+    orquestador.registrar_agente(
         FuncionalidadMedica.EXPLICACION_MEDICA,
         AgenteExplicacionMedica()
     )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.BUSCADOR_CENTROS,
+        AgenteBusquedaCentros()
+    )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.CONTACTO_MEDICO,
+        AgenteContactoMedico()
+    )
 
     # Crear aplicación Dash
-    app = dash.Dash(__name__, external_stylesheets=[config["estilo"]])
-    app.title = config["nombre_app"]
+    app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+    app.title = "Asistente Médico"
 
     # Layout principal con componentes
     app.layout = html.Div(style=MAIN_STYLES['main-container'], children=[

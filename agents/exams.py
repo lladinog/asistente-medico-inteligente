@@ -51,7 +51,7 @@ class MedicalPDFAnalysisAgent:
     def _setup_llm(self):
         """Configura el modelo LLaMA para análisis médico"""
         self.llm = LlamaCpp(
-            model_path= r"C:\Users\HP\Downloads\llama-2-7b-chat.Q4_K_M.gguf",
+            model_path= os.getenv("MODEL_PATH", r"C:\Users\HP\Downloads\llama-2-7b-chat.Q4_K_M.gguf"),
             n_ctx=self.model_config.get("n_ctx", 4096), 
             n_threads=self.model_config.get("n_threads", 8),
             n_batch=self.model_config.get("n_batch", 1024),

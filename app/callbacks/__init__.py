@@ -1,0 +1,1 @@
+# Callbacks centralizados de la aplicación 

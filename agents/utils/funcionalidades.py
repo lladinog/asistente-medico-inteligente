@@ -8,3 +8,4 @@ class FuncionalidadMedica(Enum):
     BUSCADOR_CENTROS = "buscador_centros"
     CONTACTO_MEDICO = "contacto_medico"
     EXPLICACION = "explicacion"
+
