@@ -145,6 +145,9 @@ if ! pip install -r requirements.txt; then
     exit 1
 fi
 
+sudo apt update
+sudo apt install -y libgl1
+
 echo
 print_info "⚙️  Configurando el proyecto..."
 
