@@ -19,7 +19,7 @@ config = {
 
 model_config = {
     "model_path": "modelos/llama-medical.bin",
-    "n_ctx": 2048,
+    "n_ctx": 5000,
     "n_threads": 8
 }
 
