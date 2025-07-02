@@ -22,7 +22,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
 sys.path.insert(0, root_dir)
 
-from agents.utils.conversation import Conversation
+from utils.conversation import Conversation
 
 class MedicalPDFAnalysisAgent:
     """Agente especializado en análisis de PDFs de exámenes médicos"""
@@ -46,7 +46,6 @@ class MedicalPDFAnalysisAgent:
         self.work_dir = Path("pdf_analysis")
         self.work_dir.mkdir(exist_ok=True)
         
-        print("✅ Agente de análisis de PDFs médicos inicializado")
     
     def _setup_llm(self):
         """Configura el modelo LLaMA para análisis médico"""

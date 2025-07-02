@@ -14,7 +14,8 @@ FUNCTIONAL_VIEW_STYLES = {
         'flexShrink': 0,
         'transition': TRANSITIONS['default'],
         'display': 'flex',
-        'flexDirection': 'column'
+        'flexDirection': 'column',
+        'minWidth': 0
     },
     'functional-view-hidden': {
         'width': '0',

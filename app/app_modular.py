@@ -51,7 +51,7 @@ def create_app():
         AgenteInterpretacionExamenes()
     )
     orquestador.registrar_agente(
-        FuncionalidadMedica.EXPLICACION_MEDICA,
+        FuncionalidadMedica.EXPLICACION,
         AgenteExplicacionMedica()
     )
     orquestador.registrar_agente(
@@ -64,7 +64,11 @@ def create_app():
     )
 
     # Crear aplicación Dash
-    app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+    external_stylesheets = [
+        dbc.themes.DARKLY,
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    ]
+    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
     app.title = "Asistente Médico"
 
     # Layout principal con componentes

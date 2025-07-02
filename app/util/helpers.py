@@ -61,10 +61,13 @@ def get_functionality_from_path(pathname: str) -> str:
 
 def generar_mensaje_bienvenida():
     menu = "\n".join(
-        [f"{i+1}. {f.name.replace('_', ' ').capitalize()} ({f.value})" for i, f in enumerate(FuncionalidadMedica)]
+        [
+            f"{i+1}. {f.emoji} {f.label} ({f.key})"
+            for i, f in enumerate(FuncionalidadMedica)
+        ]
     )
     return (
-        "¡Hola! Soy tu asistente médico inteligente. Estas son mis funcionalidades:\n\n"
+        f"¡Hola! Soy tu asistente médico inteligente. Estas son mis funcionalidades:\n\n"
         f"{menu}\n\n"
         "Puedes escribir el número o el nombre de la funcionalidad que deseas usar."
     ) 

@@ -12,7 +12,7 @@ CHAT_STYLES = {
         'height': '100vh',
         'transition': TRANSITIONS['default'],
         'position': 'relative',
-        'minWidth': 0  # Permite que el flex se encoja
+        'minWidth': 0
     },
     'chat-header': {
         'backgroundColor': THEME_COLORS['surface'],

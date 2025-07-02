@@ -11,7 +11,7 @@ os.environ["LLAMA_LOG_LEVEL"] = "NONE" # Puede ser: "ERROR", "WARN", "INFO", "DE
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableWithMessageHistory
 from langchain_community.llms import LlamaCpp
-from agents.utils.conversation import Conversation
+from utils.conversation import Conversation
 from transformers import AutoTokenizer
 
  

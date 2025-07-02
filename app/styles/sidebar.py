@@ -1,21 +1,23 @@
 """
 Estilos específicos para el componente Sidebar
 """
-
-from .main import THEME_COLORS, TRANSITIONS, BORDER_RADIUS
+from app.styles.main import THEME_COLORS, TRANSITIONS, BORDER_RADIUS
 
 SIDEBAR_STYLES = {
     'sidebar': {
         'width': '300px',
+        'maxWidth': '300px',
         'backgroundColor': THEME_COLORS['surface'],
         'padding': '15px',
         'borderRight': f'1px solid {THEME_COLORS["border"]}',
         'transition': TRANSITIONS['default'],
         'overflowY': 'auto',
-        'height': '100vh',
+        'overflowX': 'hidden',
+        'height': '100%',
         'position': 'relative',
         'zIndex': 10,
-        'flexShrink': 0
+        'flexShrink': 0,
+        'minWidth': 0
     },
     'sidebar-hidden': {
         'transform': 'translateX(-100%)',
@@ -25,7 +27,7 @@ SIDEBAR_STYLES = {
     },
     'sidebar-toggle': {
         'position': 'absolute',
-        'right': '-40px',
+        'right': '10px',
         'top': '10px',
         'backgroundColor': THEME_COLORS['primary'],
         'border': 'none',

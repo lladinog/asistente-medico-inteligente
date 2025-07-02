@@ -2,26 +2,14 @@ import dash
 from dash import html, dcc, Input, Output, State, callback
 import dash_bootstrap_components as dbc
 from styles.chat import CHAT_STYLES
-from agents.utils.funcionalidades import FuncionalidadMedica
-
-# Diccionario de iconos y descripciones para el menú
-FUNCIONALIDAD_ICONS = {
-    'diagnostico': ("🔍", "Diagnóstico médico"),
-    'analisis_imagenes': ("🖼️", "Análisis de imágenes"),
-    'interpretacion_examenes': ("🔬", "Interpretación de exámenes"),
-    'explicacion': ("📚", "Explicación médica"),
-    'buscador_centros': ("🏥", "Buscador de centros médicos"),
-    'contacto_medico': ("👨‍⚕️", "Contacto médico")
-}
+from utils.funcionalidades import FuncionalidadMedica
 
 def create_funcionalidades_menu():
     """Genera el menú de funcionalidades desde el Enum"""
     items = []
     for idx, funcionalidad in enumerate(FuncionalidadMedica, 1):
-        value = funcionalidad.value
-        icon, desc = FUNCIONALIDAD_ICONS.get(value, ("❓", value.replace('_', ' ').capitalize()))
         items.append(
-            html.Li(f"{idx}. {icon} {desc}  ({value})", style={'marginBottom': '6px'})
+            html.Li(f"{idx}. {funcionalidad.emoji} {funcionalidad.label}  ({funcionalidad.key})", style={'marginBottom': '6px'})
         )
     return html.Ul(items, style={'textAlign': 'left', 'color': '#b19cd9'})
 
@@ -31,11 +19,6 @@ def create_chat_component():
     return html.Div([
         # Encabezado del chat
         html.Div(style=CHAT_STYLES['chat-header'], children=[
-            dbc.Button(
-                html.I(className="fas fa-bars"),
-                id='mobile-sidebar-toggle',
-                style=CHAT_STYLES['header-button']
-            ),
             html.Div("Asistente Médico Rural", style={'fontWeight': 'bold', 'flexGrow': 1, 'textAlign': 'center'}),
             dbc.ButtonGroup([
                 dbc.Button(

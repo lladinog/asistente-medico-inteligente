@@ -9,7 +9,6 @@ from components.functional_view import (
     create_diagnostico_content,
     create_explicacion_content,
     create_interpretacion_examenes_content,
-    create_resumen_medico_content,
     create_contacto_medico_content,
     create_busqueda_content,
     create_analizar_imagenes_content
@@ -47,8 +46,6 @@ def register_navigation_callbacks(app):
             content = create_explicacion_content()
         elif pathname == '/interpretacion-examenes' or functionality == 'interpretacion_examenes':
             content = create_interpretacion_examenes_content()
-        elif pathname == '/resumen-medico' or functionality == 'resumen_medico':
-            content = create_resumen_medico_content()
         elif pathname == '/contacto-medico' or functionality == 'contacto_medico':
             content = create_contacto_medico_content()
         elif pathname == '/busqueda' or functionality == 'busqueda':

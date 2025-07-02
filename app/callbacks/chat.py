@@ -7,19 +7,10 @@ from dash import Input, Output, State, callback, no_update
 from dash.exceptions import PreventUpdate
 import datetime
 from styles.chat import CHAT_STYLES
-from agents.utils.funcionalidades import FuncionalidadMedica
+from utils.funcionalidades import FuncionalidadMedica
 import uuid
-from app.utils.helpers import generar_mensaje_bienvenida, create_conversation_item
+from app.util.helpers import generar_mensaje_bienvenida, create_conversation_item
 import time
-
-FUNCIONALIDAD_ICONS = {
-    'diagnostico': ("🔍", "Diagnóstico médico"),
-    'analisis_imagenes': ("🖼️", "Análisis de imágenes"),
-    'interpretacion_examenes': ("🔬", "Interpretación de exámenes"),
-    'explicacion': ("📚", "Explicación médica"),
-    'buscador_centros': ("🏥", "Buscador de centros médicos"),
-    'contacto_medico': ("👨‍⚕️", "Contacto médico")
-}
 
 def register_chat_callbacks(app, orquestador):
     """Registra todos los callbacks relacionados con el chat"""
@@ -53,7 +44,7 @@ def register_chat_callbacks(app, orquestador):
             new_session_id = str(uuid.uuid4())
             bienvenida = generar_mensaje_bienvenida()
             welcome_message = [
-                dash.html.Div(f"Asistente: {bienvenida}", style=CHAT_STYLES['bot-message'])
+                dash.html.Pre(f"Asistente: {bienvenida}", style=CHAT_STYLES['bot-message'])
             ]
             # Crear nueva conversación con los campos correctos
             new_conversation = create_conversation_item("Nueva conversación", new_session_id)

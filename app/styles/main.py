@@ -8,7 +8,7 @@ MAIN_STYLES = {
     'main-container': {
         'backgroundColor': '#0f0f17',
         'color': '#ffffff',
-        'minHeight': '100vh',
+        'height': '100vh',
         'display': 'flex',
         'flexDirection': 'row',
         'overflow': 'hidden',

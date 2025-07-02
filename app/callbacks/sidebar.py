@@ -1,6 +1,9 @@
 """
 Callbacks específicos para el componente Sidebar
 """
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import dash
 from dash import Input, Output, State, callback
@@ -15,11 +18,10 @@ def register_sidebar_callbacks(app):
         Output('sidebar-toggle', 'style'),
         Output('floating-sidebar-toggle', 'style'),
         Input('sidebar-toggle', 'n_clicks'),
-        Input('mobile-sidebar-toggle', 'n_clicks'),
         Input('floating-sidebar-toggle', 'n_clicks'),
         State('sidebar-collapsed', 'data')
     )
-    def toggle_sidebar(sidebar_clicks, mobile_clicks, floating_clicks, is_collapsed):
+    def toggle_sidebar(sidebar_clicks, floating_clicks, is_collapsed):
         ctx = dash.callback_context
         if not ctx.triggered:
             return SIDEBAR_STYLES['sidebar'], False, SIDEBAR_STYLES['sidebar-toggle'], {'display': 'none'}

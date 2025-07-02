@@ -1,11 +1,11 @@
-import sys
 import os
+import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import time
 import re
 from typing import Dict, Optional
-from agents.utils.funcionalidades import FuncionalidadMedica
+from utils.funcionalidades import FuncionalidadMedica
 from agents.agente import Agente
 
 class Orquestador:
@@ -35,25 +35,25 @@ class Orquestador:
         
         # Patrones para clasificación por palabras clave
         self.patrones_clasificacion = {
-            FuncionalidadMedica.ANALISIS_IMAGENES.value: [
+            FuncionalidadMedica.ANALISIS_IMAGENES.key: [
                 r'\b(radiografía|radiografia|rx|rayos?\s*x|tomografía|tomografia|tac|resonancia|rmn|ultrasonido|ecografía|ecografia|imagen|placa)\b',
                 r'\b(scanner|escáner|escaneo)\b',
                 r'\b(imagen\s*médica|imágenes\s*médicas)\b'
             ],
-            FuncionalidadMedica.INTERPRETACION_EXAMENES.value: [
+            FuncionalidadMedica.INTERPRETACION_EXAMENES.key: [
                 r'\b(examen|análisis|analisis|laboratorio|resultado|prueba)\b',
                 r'\b(sangre|orina|heces|biopsia|cultivo)\b',
                 r'\b(hemograma|glicemia|colesterol|triglicéridos|creatinina|urea)\b',
                 r'\b(examenes?\s*de\s*laboratorio)\b',
                 r'\b(valores?\s*de\s*referencia)\b'
             ],
-            FuncionalidadMedica.BUSCADOR_CENTROS.value: [
+            FuncionalidadMedica.BUSCADOR_CENTROS.key: [
                 r'\b(centro\s*médico|hospital|clínica|clinica|consultorio)\b',
                 r'\b(ubicación|ubicacion|dirección|direccion|dónde|donde)\b',
                 r'\b(cerca|cercano|próximo|proximo)\b',
                 r'\b(buscar|encontrar|localizar)\b.*\b(médico|doctor|hospital|clínica)\b'
             ],
-             FuncionalidadMedica.CONTACTO_MEDICO.value: [
+             FuncionalidadMedica.CONTACTO_MEDICO.key: [
                 r'\b(contactar|llamar|comunicar|hablar)\b.*\b(médico|doctor)\b',
                 r'\b(segunda\s*opinión|segunda\s*opinion|opinión\s*médica|opinion\s*medica)\b',
                 r'\b(consultar\s*médico|consultar\s*doctor|consulta\s*médica|consulta\s*medica)\b',
@@ -65,7 +65,7 @@ class Orquestador:
                 r'\b(derivar|referir|remitir)\b.*\b(médico|doctor|especialista)\b',
                 r'\b(evaluación\s*médica|evaluacion\s*medica|revisión\s*médica|revision\s*medica)\b'
             ],
-            FuncionalidadMedica.EXPLICACION.value: [
+            FuncionalidadMedica.EXPLICACION.key: [
                 r'\b(qué\s*es|que\s*es|explicar|explicación|explicacion)\b',
                 r'\b(significa|significado|definición|definicion)\b',
                 r'\b(cómo\s*funciona|como\s*funciona|mecanismo)\b',
@@ -173,7 +173,7 @@ class Orquestador:
         """
         Registra un agente para una funcionalidad específica.
         """
-        self.agentes[funcionalidad.value] = agente
+        self.agentes[funcionalidad.key] = agente
     
     def _clasificar_por_patrones(self, mensaje: str) -> Optional[str]:
         """
@@ -196,22 +196,45 @@ class Orquestador:
         
         return None
     
-    def _detectar_funcionalidad_directa(self, mensaje: str) -> Optional[str]:
+    def _detectar_funcionalidad_directa(self, mensaje: str) -> Optional[Dict]:
         """
         Si el mensaje es un número válido o el nombre exacto de una funcionalidad,
-        retorna el valor de la funcionalidad. Si no, retorna None.
+        retorna la respuesta por defecto completa (dict). Si no, retorna None.
         """
+        mensajes_por_defecto = {
+            "diagnostico": "Hola, soy el agente de diagnóstico. Puedes contarme tus síntomas o dudas médicas y te orientaré.",
+            "analisis_imagenes": "Hola, soy el agente de análisis de imágenes. Sube una imagen médica (radiografía, TAC, etc.) y la analizaré.",
+            "interpretacion_examenes": "Hola, soy el agente de interpretación de exámenes. Sube tu archivo de resultados de laboratorio o hazme una pregunta sobre tus exámenes.",
+            "explicacion": "Hola, soy el agente de explicaciones médicas. Pregúntame sobre enfermedades, términos médicos o resultados y te lo explico.",
+            "buscador_centros": "Hola, soy el agente buscador de centros médicos. Pregúntame por hospitales, clínicas o centros cercanos.",
+            "contacto_medico": "Hola, soy el agente de contacto médico. Te ayudo a comunicarte o agendar una cita con un profesional de la salud."
+        }
         mensaje_limpio = mensaje.strip().lower()
-        # Por número
         funcionalidades = list(FuncionalidadMedica)
         if mensaje_limpio.isdigit():
             idx = int(mensaje_limpio) - 1
             if 0 <= idx < len(funcionalidades):
-                return funcionalidades[idx].value
-        # Por nombre exacto
+                funcionalidad_key = funcionalidades[idx].key
+                mensaje_defecto = mensajes_por_defecto.get(funcionalidad_key, "Hola, ¿en qué puedo ayudarte?")
+                return {
+                    "funcionalidad": funcionalidad_key,
+                    "respuesta": {
+                        "output": mensaje_defecto,
+                        "metadata": {"tipo": "mensaje_defecto"}
+                    },
+                    "metadata": {"info": "respuesta_defecto_funcionalidad"}
+                }
         for funcionalidad in funcionalidades:
-            if mensaje_limpio == funcionalidad.value:
-                return funcionalidad.value
+            if mensaje_limpio == funcionalidad.key:
+                mensaje_defecto = mensajes_por_defecto.get(funcionalidad.key, "Hola, ¿en qué puedo ayudarte?")
+                return {
+                    "funcionalidad": funcionalidad.key,
+                    "respuesta": {
+                        "output": mensaje_defecto,
+                        "metadata": {"tipo": "mensaje_defecto"}
+                    },
+                    "metadata": {"info": "respuesta_defecto_funcionalidad"}
+                }
         return None
 
     def _determinar_funcionalidad(self, mensaje: str) -> str:
@@ -224,12 +247,6 @@ class Orquestador:
         Returns:
             str: Identificador de la funcionalidad detectada
         """
-        # Paso 0: Intentar detección directa por número o nombre exacto
-        funcionalidad_directa = self._detectar_funcionalidad_directa(mensaje)
-        if funcionalidad_directa:
-            print(f"[ORQUESTADOR] Funcionalidad detectada directamente: {funcionalidad_directa}")
-            return funcionalidad_directa
-
         # Paso 1: Intentar clasificación por patrones (más rápido y confiable)
         funcionalidad_patron = self._clasificar_por_patrones(mensaje)
         if funcionalidad_patron:
@@ -277,7 +294,7 @@ class Orquestador:
         
         # Paso 3: Si todo falla, usar diagnóstico por defecto
         print("[CLASIFICADOR] Usando diagnóstico por defecto")
-        return FuncionalidadMedica.DIAGNOSTICO.value
+        return FuncionalidadMedica.DIAGNOSTICO.key
     
     def _es_archivo_pdf(self, mensaje_o_ruta: str) -> bool:
         """
@@ -302,17 +319,15 @@ class Orquestador:
     def procesar_mensaje(self, session_id: Optional[str], mensaje_usuario: str, archivo_path: Optional[str] = None) -> Dict:
         """
         Procesa un mensaje del usuario con detección automática de archivos PDF.
-        
-        Args:
-            session_id: ID de sesión
-            mensaje_usuario: Mensaje del usuario
-            archivo_path: Ruta del archivo si se envió uno
-            
-        Returns:
-            Dict: Resultado del procesamiento
         """
         if not session_id:
             session_id = self._generar_session_id()
+
+        # Detección directa de funcionalidad y respuesta por defecto
+        respuesta_directa = self._detectar_funcionalidad_directa(mensaje_usuario)
+        if respuesta_directa:
+            respuesta_directa["session_id"] = session_id
+            return respuesta_directa
         
         # Verificar si se envió un archivo PDF
         if archivo_path and self._es_archivo_pdf(archivo_path):
@@ -322,7 +337,7 @@ class Orquestador:
         # Verificar si el mensaje hace referencia a un PDF
         if self._es_archivo_pdf(mensaje_usuario):
             print("[ORQUESTADOR] Referencia a PDF en el mensaje")
-            funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.value
+            funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.key
         else:
             # Clasificación normal
             funcionalidad = self._determinar_funcionalidad(mensaje_usuario)
@@ -330,7 +345,7 @@ class Orquestador:
         print(f"[ORQUESTADOR] Funcionalidad detectada: {funcionalidad}")
         
         # Obtener agente correspondiente
-        agente = self.agentes.get(funcionalidad, self.agentes.get(FuncionalidadMedica.DIAGNOSTICO.value))
+        agente = self.agentes.get(funcionalidad, self.agentes.get(FuncionalidadMedica.DIAGNOSTICO.key))
         
         if not agente:
             return {
@@ -351,7 +366,7 @@ class Orquestador:
         except Exception as e:
             # Si falla el preprocesamiento, delegar al agente de diagnóstico
             print(f"[ERROR] Fallo en preprocesamiento: {str(e)}. Usando agente de diagnóstico por defecto.")
-            funcionalidad = FuncionalidadMedica.DIAGNOSTICO.value
+            funcionalidad = FuncionalidadMedica.DIAGNOSTICO.key
             agente = self.agentes[funcionalidad]
             metadata = None
             
@@ -418,7 +433,7 @@ class Orquestador:
             }
         
         # Clasificar automáticamente como interpretación de exámenes
-        funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.value
+        funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.key
         self._cambiar_interfaz(funcionalidad)
         print(f"[ORQUESTADOR] Procesando PDF como: {funcionalidad}")
         
@@ -481,7 +496,7 @@ class Orquestador:
         """
         Continúa una conversación sobre exámenes médicos previamente analizados.
         """
-        funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.value
+        funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.key
         agente = self.agentes.get(funcionalidad)
         
         if not agente:
