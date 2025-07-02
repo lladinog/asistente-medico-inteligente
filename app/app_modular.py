@@ -78,6 +78,7 @@ def create_app():
         dcc.Store(id='current-functionality', data='home'),
         dcc.Store(id='sidebar-collapsed', data=False),
         dcc.Store(id='conversations-store', data=[]),
+        dcc.Store(id='sidebar-editing-title', data=None),
         dcc.Upload(id='upload-document', children=None, multiple=True),
         
         # Botón flotante para abrir sidebar (visible cuando está cerrado)

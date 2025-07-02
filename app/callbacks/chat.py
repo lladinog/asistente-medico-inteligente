@@ -3,7 +3,7 @@ Callbacks específicos para el componente Chat
 """
 
 import dash
-from dash import Input, Output, State, callback, no_update
+from dash import Input, Output, State, callback, no_update, ALL
 from dash.exceptions import PreventUpdate
 import datetime
 from styles.chat import CHAT_STYLES
@@ -21,23 +21,41 @@ def register_chat_callbacks(app, orquestador):
          Output('current-functionality', 'data'),
          Output('url', 'pathname', allow_duplicate=True),
          Output('conversations-store', 'data'),
-         Output('session-id', 'data')],
+         Output('session-id', 'data'),
+         Output('sidebar-editing-title', 'data', allow_duplicate=True)],
         [Input('send-button', 'n_clicks'),
          Input('user-input', 'n_submit'),
-         Input('new-chat-button', 'n_clicks')],
+         Input('new-chat-button', 'n_clicks'),
+         Input({'type': 'save-title-btn', 'index': ALL}, 'n_clicks'),
+         Input({'type': 'conversation-title-input', 'index': ALL}, 'n_blur')],
         [State('user-input', 'value'),
          State('session-id', 'data'),
          State('chat-messages', 'children'),
          State('current-functionality', 'data'),
-         State('conversations-store', 'data')],
+         State('conversations-store', 'data'),
+         State({'type': 'conversation-title-input', 'index': ALL}, 'value'),
+         State('sidebar-editing-title', 'data')],
         prevent_initial_call=True
     )
-    def update_chat(send_clicks, submit, new_chat_clicks, user_input, session_id, existing_messages, current_functionality, conversations):
+    def update_chat(send_clicks, submit, new_chat_clicks, save_title_clicks, input_blur, user_input, session_id, existing_messages, current_functionality, conversations, input_values, editing_title):
         ctx = dash.callback_context
         if not ctx.triggered:
             raise PreventUpdate
         
         trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        
+        # EDICIÓN DE TÍTULO
+        if 'save-title-btn' in trigger_id or 'conversation-title-input' in trigger_id:
+            if not editing_title or not conversations:
+                raise PreventUpdate
+            new_title = input_values[0] if input_values else None
+            if new_title:
+                for conv in conversations:
+                    if conv['id'] == editing_title:
+                        conv['title'] = new_title
+                # No cambiamos mensajes ni funcionalidad, solo actualizamos el store y salimos del modo edición
+                return no_update, no_update, no_update, no_update, conversations, no_update, None
+            raise PreventUpdate
         
         # Manejar nueva conversación
         if trigger_id == 'new-chat-button':
@@ -61,7 +79,7 @@ def register_chat_callbacks(app, orquestador):
             for conv in conversations:
                 conv['active'] = False
             conversations.append(new_conversation)
-            return welcome_message, "", 'home', '/', conversations, new_session_id
+            return welcome_message, "", 'home', '/', conversations, new_session_id, None
         
         # Manejar envío de mensaje
         if not user_input or (send_clicks is None and submit is None):
@@ -112,7 +130,7 @@ def register_chat_callbacks(app, orquestador):
             else:
                 pathname = dash.no_update
             
-            return rendered_messages, "", funcionalidad, pathname, conversations, session_id
+            return rendered_messages, "", funcionalidad, pathname, conversations, session_id, None
         except Exception as e:
             print(f"Error en update_chat: {str(e)}")
             error_message = dash.html.Div(
@@ -126,4 +144,4 @@ def register_chat_callbacks(app, orquestador):
                     rendered_messages.append(dash.html.Div(f"Tú: {msg['content']}", style=CHAT_STYLES['user-message']))
                 else:
                     rendered_messages.append(dash.html.Div(f"Asistente: {msg['content']}", style=CHAT_STYLES['bot-message']))
-            return rendered_messages, "", current_functionality, dash.no_update, conversations, session_id 
+            return rendered_messages, "", current_functionality, dash.no_update, conversations, session_id, None 

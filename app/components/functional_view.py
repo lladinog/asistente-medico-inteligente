@@ -1,48 +1,7 @@
 import dash
 from dash import html, dcc, Input, Output, State, callback
 import dash_bootstrap_components as dbc
-import plotly.express as px
-import pandas as pd
-from datetime import datetime
-
-# Estilos (simulados para el ejemplo)
-FUNCTIONAL_VIEW_STYLES = {
-    'functional-view': {},
-    'functional-close-button': {},
-    'functional-content': {},
-    'content-card-header': {},
-    'content-text': {},
-    'content-card': {}
-}
-
-# Datos por defecto
-DEFAULT_SYMPTOMS = "Fiebre, dolor de cabeza y malestar general"
-DEFAULT_DIAGNOSES = [
-    {"nombre": "Gripe común", "probabilidad": 65, "urgencia": "Baja"},
-    {"nombre": "Infección viral", "probabilidad": 25, "urgencia": "Baja"},
-    {"nombre": "Otra condición", "probabilidad": 10, "urgencia": "Media"}
-]
-
-DEFAULT_IMAGE_URL = "assets/placeholder-image.jpg"
-DEFAULT_IMAGE_ANALYSIS = {
-    "hallazgos": [
-        {"nombre": "Opacidad pulmonar", "confianza": 78},
-        {"nombre": "Sin fracturas visibles", "confianza": 92}
-    ],
-    "calidad": "Aceptable",
-    "confianza_global": 85,
-    "anomalias": 2,
-    "descripcion": "Se observan pequeñas opacidades en el lóbulo inferior derecho que podrían indicar infección. No se detectan fracturas ni otras anomalías óseas."
-}
-
-DEFAULT_EXAM_DATA = {
-    "file_url": "assets/placeholder-exam.pdf",
-    "results": {
-        "Glucosa": {"valor": 110, "min": 70, "max": 100, "unidad": "mg/dL"},
-        "Hemoglobina": {"valor": 14.5, "min": 12, "max": 16, "unidad": "g/dL"},
-        "Colesterol": {"valor": 190, "min": 0, "max": 200, "unidad": "mg/dL"}
-    }
-}
+from styles.functional_view import FUNCTIONAL_VIEW_STYLES
 
 def create_functional_view_component():
     """Crea el componente FunctionalView"""
@@ -55,359 +14,489 @@ def create_functional_view_component():
         html.Div(id='functional-content', style=FUNCTIONAL_VIEW_STYLES['functional-content'])
     ], id='functional-view', style=FUNCTIONAL_VIEW_STYLES['functional-view'])
 
-def create_diagnostico_content(sintomas=None, diagnosticos=None):
-    """Contenido para diagnóstico médico con parámetros opcionales"""
-    sintomas = sintomas or DEFAULT_SYMPTOMS
-    diagnosticos = diagnosticos or DEFAULT_DIAGNOSES
+def create_diagnostico_content(sintomas=None, diagnosticos=None, paciente_info=None):
+    """Contenido para la funcionalidad de diagnóstico"""
     
-    # Datos para el mapa (por defecto Bogotá)
-    centros_medicos = pd.DataFrame({
-        'lat': [4.60971, 4.65346, 4.62434],
-        'lon': [-74.08175, -74.08365, -74.06613],
-        'name': ['Hospital Central', 'Clínica Salud', 'Centro Médico ABC'],
-        'tipo': ['Hospital', 'Clínica', 'Centro Médico']
-    })
+    # Componentes default
+    default_sintomas = html.P("Ingresa tus síntomas en el chat para obtener un análisis detallado.", 
+                             style=FUNCTIONAL_VIEW_STYLES['content-text'])
+    default_diagnosticos = html.P("Los diagnósticos aparecerán aquí después del análisis.", 
+                                style=FUNCTIONAL_VIEW_STYLES['content-text'])
     
-    fig = px.scatter_mapbox(centros_medicos, lat="lat", lon="lon", 
-                          hover_name="name", hover_data=["tipo"],
-                          color="tipo",
-                          zoom=12, height=300)
-    fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    # Componentes específicos si hay parámetros
+    sintomas_content = []
+    if sintomas:
+        sintomas_content.append(html.H6("Síntomas reportados:", style={'margin-bottom': '10px'}))
+        if isinstance(sintomas, list):
+            for s in sintomas:
+                sintomas_content.append(html.Li(s, style={'margin-left': '20px'}))
+        else:
+            sintomas_content.append(html.P(sintomas))
+    else:
+        sintomas_content.append(default_sintomas)
+    
+    diagnosticos_content = []
+    if diagnosticos:
+        diagnosticos_content.append(html.H6("Posibles diagnósticos:", style={'margin-bottom': '10px'}))
+        if isinstance(diagnosticos, list):
+            for d in diagnosticos:
+                diagnosticos_content.append(html.Li(d, style={'margin-left': '20px'}))
+        else:
+            diagnosticos_content.append(html.P(diagnosticos))
+    else:
+        diagnosticos_content.append(default_diagnosticos)
+    
+    # Info del paciente si está disponible
+    paciente_section = []
+    if paciente_info:
+        paciente_section = [
+            dbc.Card([
+                dbc.CardBody([
+                    html.H6("👤 Información del Paciente", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                    html.Div([
+                        html.P(f"Nombre: {paciente_info.get('nombre', 'No disponible')}"),
+                        html.P(f"Edad: {paciente_info.get('edad', 'No disponible')}"),
+                        html.P(f"Género: {paciente_info.get('genero', 'No disponible')}")
+                    ])
+                ])
+            ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
+        ]
     
     return html.Div([
-        html.Div([
-            html.H4("🔍 Diagnóstico Médico", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-            dbc.Badge("Preliminar", color="warning", className="me-1"),
-        ], style={'display': 'flex', 'align-items': 'center', 'gap': '10px'}),
+        html.H4("🔍 Diagnóstico Médico", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+        html.P("Análisis detallado de síntomas y posibles diagnósticos.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
         
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📋 Síntomas Analizados", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        dcc.Markdown(sintomas, style={'whiteSpace': 'pre-line'})
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-                
-                dbc.Card([
-                    dbc.CardHeader("🏥 Posibles Diagnósticos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        create_diagnosis_probability_chart(diagnosticos)
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📍 Centros Médicos Cercanos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        dcc.Graph(figure=fig, config={'displayModeBar': False}),
-                        html.Small("Ubicación aproximada del paciente", className="text-muted")
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-                
-                dbc.Card([
-                    dbc.CardHeader("⚠️ Recomendaciones", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Ul([
-                            html.Li("Consulta siempre con un profesional de la salud"),
-                            html.Li("Este es solo un análisis preliminar"),
-                            html.Li("No reemplaza la evaluación médica profesional")
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6)
-        ])
+        *paciente_section,
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📋 Síntomas Analizados", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='sintomas-analizados', children=sintomas_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("🏥 Posibles Diagnósticos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='diagnosticos-posibles', children=diagnosticos_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("⚠️ Recomendaciones", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='recomendaciones-diagnostico', children=[
+                    html.P("• Consulta siempre con un profesional de la salud", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• Este es solo un análisis preliminar", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• No reemplaza la evaluación médica profesional", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
     ])
 
-def create_explicacion_content(terminos=None, conceptos=None):
-    """Contenido para explicación médica con parámetros opcionales"""
-    terminos = terminos or ["Hiperglucemia", "Taquicardia"]
-    conceptos = conceptos or {
-        "Hiperglucemia": "Niveles de azúcar en sangre más altos de lo normal",
-        "Taquicardia": "Frecuencia cardíaca más rápida de lo normal"
-    }
+def create_explicacion_content(termino=None, explicacion=None):
+    """Contenido para la funcionalidad de explicación médica"""
+    
+    # Componente default
+    default_content = html.P("Pregunta sobre cualquier término médico en el chat.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+    
+    # Componente específico si hay parámetros
+    termino_content = []
+    if termino and explicacion:
+        termino_content.append(html.H6(f"Término: {termino}", style={'margin-bottom': '10px'}))
+        termino_content.append(html.P(explicacion))
+    else:
+        termino_content.append(default_content)
     
     return html.Div([
         html.H4("📚 Explicación Médica", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
         html.P("Explicaciones detalladas de términos y conceptos médicos.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
         
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("🔤 Términos Explicados", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Ul([html.Li(f"{term}: {conceptos[term]}") for term in terminos])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📖 Conceptos Médicos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Div([
-                            html.Div([
-                                html.H6(term, className="mb-2"),
-                                html.P(desc, className="mb-3")
-                            ]) for term, desc in conceptos.items()
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6)
-        ])
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("🔤 Términos Explicados", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='terminos-explicados', children=termino_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📖 Conceptos Médicos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='conceptos-medicos', children=[
+                    html.P("Aquí aparecerán explicaciones de conceptos médicos.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
     ])
 
-def create_interpretacion_examenes_content(file_url=None, results=None):
-    """Contenido para interpretación de exámenes con parámetros opcionales"""
-    file_url = file_url or DEFAULT_EXAM_DATA["file_url"]
-    results = results or DEFAULT_EXAM_DATA["results"]
+def create_interpretacion_examenes_content(file_path=None, resultados=None):
+    """Contenido para la funcionalidad de interpretación de exámenes"""
     
-    exam_data = pd.DataFrame({
-        'Parametro': list(results.keys()),
-        'Valor': [v['valor'] for v in results.values()],
-        'Min': [v['min'] for v in results.values()],
-        'Max': [v['max'] for v in results.values()],
-        'Unidad': [v['unidad'] for v in results.values()]
-    })
+    # Componente default
+    default_content = html.Div([
+        html.P("Sube o describe tus resultados de exámenes en el chat.", 
+               style=FUNCTIONAL_VIEW_STYLES['content-text']),
+        dcc.Upload(
+            id='upload-examenes',
+            children=dbc.Button(
+                "📎 Adjuntar archivo (PDF o TXT)",
+                color="primary",
+                className="me-1"
+            ),
+            multiple=False
+        )
+    ])
     
-    fig = px.bar(exam_data, x='Parametro', y='Valor', 
-                title="Resultados del Examen",
-                labels={'Valor': 'Valor (unidad)'},
-                hover_data=['Unidad'],
-                text='Valor')
-    fig.update_traces(marker_color=['#FFA07A' if v > m else '#90EE90' 
-                                  for v, m in zip(exam_data['Valor'], exam_data['Max'])])
+    # Componente específico si hay parámetros
+    resultados_content = []
+    if file_path:
+        # Mostrar el archivo o su contenido
+        resultados_content.append(html.H6("Archivo adjunto:", style={'margin-bottom': '10px'}))
+        resultados_content.append(html.P(f"Archivo: {file_path}"))
+        
+        # Botón para ver el archivo (simulado)
+        resultados_content.append(dbc.Button(
+            "👁️ Ver archivo",
+            color="info",
+            className="me-1",
+            style={'margin-top': '10px'}
+        ))
+    else:
+        resultados_content.append(default_content)
+    
+    # Resultados del análisis si están disponibles
+    analisis_content = []
+    if resultados:
+        analisis_content.append(html.H6("Interpretación:", style={'margin-bottom': '10px'}))
+        if isinstance(resultados, dict):
+            for key, value in resultados.items():
+                analisis_content.append(html.P(f"{key}: {value}"))
+        else:
+            analisis_content.append(html.P(resultados))
     
     return html.Div([
         html.H4("🔬 Interpretación de Exámenes", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
         html.P("Análisis e interpretación de resultados de exámenes médicos.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
         
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📊 Resultados de Exámenes", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Iframe(src=file_url, style={'width': '100%', 'height': '400px', 'border': '1px solid #ddd'})
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📈 Valores de Referencia", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        dcc.Graph(figure=fig),
-                        html.Small("Comparación con rangos normales", className="text-muted")
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6)
-        ]),
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📊 Resultados de Exámenes", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='resultados-examenes', children=resultados_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
         
         dbc.Card([
-            dbc.CardHeader("⚠️ Importante", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
             dbc.CardBody([
-                html.Ul([
-                    html.Li("La interpretación es solo informativa"),
-                    html.Li("Consulta siempre con tu médico"),
-                    html.Li("Los valores pueden variar según el laboratorio")
+                html.H6("📈 Análisis de Resultados", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='valores-referencia', children=analisis_content if analisis_content else [
+                    html.P("Aquí aparecerán los valores normales y su interpretación.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("⚠️ Importante", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='importante-examenes', children=[
+                    html.P("• La interpretación es solo informativa", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• Consulta siempre con tu médico", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• Los valores pueden variar según el laboratorio", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
                 ])
             ])
         ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
     ])
 
-def create_contacto_medico_content(centros=None, especialistas=None, info_contacto=None):
-    """Contenido para contacto médico con parámetros opcionales"""
-    centros = centros or [
-        {"nombre": "Hospital Central", "direccion": "Calle 123 #45-67", "telefono": "601 1234567", "distancia": "2.5 km"},
-        {"nombre": "Clínica Salud", "direccion": "Av. Principal #98-76", "telefono": "601 7654321", "distancia": "3.1 km"}
-    ]
+def create_contacto_medico_content(medico_info=None, centros=None):
+    """Contenido para la funcionalidad de contacto médico"""
     
-    especialistas = especialistas or [
-        {"nombre": "Dr. Carlos Martínez", "especialidad": "Medicina General", "ubicacion": "Clínica Salud", "disponibilidad": "L-V 8am-5pm"},
-        {"nombre": "Dra. Ana Rodríguez", "especialidad": "Pediatría", "ubicacion": "Hospital Central", "disponibilidad": "L-J 10am-6pm"}
-    ]
+    # Componente default
+    default_content = html.P("Busca centros médicos en tu área en el chat.", 
+                            style=FUNCTIONAL_VIEW_STYLES['content-text'])
     
-    info_contacto = info_contacto or {
-        "emergencias": "123",
-        "salud_total": "018000123456",
-        "atencion_ciudadana": "601 9876543"
-    }
+    # Componente específico si hay parámetros
+    medico_content = []
+    if medico_info:
+        medico_content.append(html.H6("Médico asignado:", style={'margin-bottom': '10px'}))
+        medico_content.append(html.P(f"Nombre: {medico_info.get('nombre', 'No disponible')}"))
+        medico_content.append(html.P(f"Especialidad: {medico_info.get('especialidad', 'No disponible')}"))
+        medico_content.append(html.P(f"Contacto: {medico_info.get('contacto', 'No disponible')}"))
+    else:
+        medico_content.append(default_content)
     
-    # Mapa con centros médicos
-    centros_df = pd.DataFrame({
-        'lat': [4.60971, 4.65346],
-        'lon': [-74.08175, -74.08365],
-        'name': [c["nombre"] for c in centros],
-        'tipo': ['Hospital', 'Clínica']
-    })
-    
-    fig = px.scatter_mapbox(centros_df, lat="lat", lon="lon", 
-                          hover_name="name", hover_data=["tipo"],
-                          zoom=12, height=300)
-    fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    # Lista de centros si está disponible
+    centros_content = []
+    if centros:
+        centros_content.append(html.H6("Centros médicos recomendados:", style={'margin-bottom': '10px'}))
+        if isinstance(centros, list):
+            for centro in centros:
+                centros_content.append(html.Li(
+                    html.Div([
+                        html.Strong(centro.get('nombre', 'Centro médico')),
+                        html.Br(),
+                        html.Span(f"Dirección: {centro.get('direccion', 'No disponible')}"),
+                        html.Br(),
+                        html.Span(f"Teléfono: {centro.get('telefono', 'No disponible')}")
+                    ]),
+                    style={'margin-bottom': '10px'}
+                ))
+        else:
+            centros_content.append(html.P(centros))
     
     return html.Div([
         html.H4("👨‍⚕️ Contacto Médico", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
         html.P("Información de contacto y localización de profesionales de la salud.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
         
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("🏥 Centros Médicos Cercanos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        dcc.Graph(figure=fig, config={'displayModeBar': False}),
-                        html.Div([
-                            html.Div([
-                                html.H6(c["nombre"], className="mt-3"),
-                                html.P(c["direccion"], className="mb-1"),
-                                html.P(f"Tel: {c['telefono']} - Distancia: {c['distancia']}", className="mb-1 text-muted")
-                            ]) for c in centros
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("👨‍⚕️ Especialistas", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Div([
-                            html.Div([
-                                html.H6(e["nombre"], className="mb-1"),
-                                html.P(e["especialidad"], className="mb-1"),
-                                html.Small(f"{e['ubicacion']} - {e['disponibilidad']}", className="text-muted")
-                            ], className="mb-3 p-2 border-bottom") for e in especialistas
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-                
-                dbc.Card([
-                    dbc.CardHeader("📞 Información de Contacto", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Ul([
-                            html.Li(f"Emergencias: {info_contacto['emergencias']}"),
-                            html.Li(f"Línea salud total: {info_contacto['salud_total']}"),
-                            html.Li(f"Atención al ciudadano: {info_contacto['atencion_ciudadana']}")
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6)
-        ])
-    ])
-
-def create_busqueda_content(recursos=None, articulos=None):
-    """Contenido para búsqueda médica con parámetros opcionales"""
-    recursos = recursos or [
-        {"titulo": "Guía de síntomas comunes", "tipo": "PDF", "enlace": "#"},
-        {"titulo": "Directorio de especialidades médicas", "tipo": "Web", "enlace": "#"}
-    ]
-    
-    articulos = articulos or [
-        {"titulo": "Avances en el tratamiento de la diabetes", "autor": "Dr. López", "año": 2023},
-        {"titulo": "Nuevas técnicas de diagnóstico por imagen", "autor": "Dra. Gómez", "año": 2022}
-    ]
-    
-    return html.Div([
-        html.H4("🔍 Búsqueda Médica", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-        html.P("Búsqueda de información médica y recursos de salud.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
-        
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📚 Recursos Médicos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Ul([
-                            html.Li([
-                                html.A(r["titulo"], href=r["enlace"], target="_blank"),
-                                html.Small(f" ({r['tipo']})", className="text-muted")
-                            ]) for r in recursos
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📖 Artículos y Estudios", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Div([
-                            html.Div([
-                                html.H6(a["titulo"], className="mb-1"),
-                                html.P(f"{a['autor']} - {a['año']}", className="mb-1 text-muted")
-                            ], className="mb-3 p-2 border-bottom") for a in articulos
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6)
-        ])
-    ])
-
-def create_analizar_imagenes_content(image_url=None, analysis_results=None):
-    """Contenido para análisis de imágenes con parámetros opcionales"""
-    image_url = image_url or DEFAULT_IMAGE_URL
-    analysis_results = analysis_results or DEFAULT_IMAGE_ANALYSIS
-    
-    return html.Div([
-        html.H4("🖼️ Análisis de Imágenes", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-        html.P("Análisis de imágenes médicas y diagnósticos visuales.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
-        
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("📸 Imagen Analizada", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Img(src=image_url, style={'width': '100%', 'border-radius': '5px'})
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader("🔍 Resultados del Análisis", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
-                    dbc.CardBody([
-                        html.Div([
-                            html.H6("Hallazgos:", className="mb-2"),
-                            html.Ul([html.Li(f"{f['nombre']} (confianza: {f['confianza']}%)") 
-                                    for f in analysis_results['hallazgos']]),
-                            html.Hr(),
-                            html.P(analysis_results['descripcion'])
-                        ])
-                    ])
-                ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
-            ], width=6)
-        ]),
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("🏥 Centros Médicos Cercanos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='centros-medicos', children=centros_content if centros_content else [
+                    html.P("Busca centros médicos en tu área en el chat.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
         
         dbc.Card([
-            dbc.CardHeader("⚠️ Limitaciones", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
             dbc.CardBody([
-                html.Ul([
-                    html.Li("El análisis es preliminar"),
-                    html.Li("Consulta siempre con un radiólogo"),
-                    html.Li("No reemplaza la evaluación profesional")
+                html.H6("👨‍⚕️ Especialista Asignado", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='especialistas', children=medico_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📞 Información de Contacto", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='info-contacto', children=[
+                    html.P("Teléfonos, direcciones y horarios de atención.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
                 ])
             ])
         ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
     ])
 
-def create_diagnosis_probability_chart(diagnosticos):
-    """Crea gráfico de probabilidad de diagnósticos"""
-    data = pd.DataFrame({
-        'Diagnóstico': [d['nombre'] for d in diagnosticos],
-        'Probabilidad': [d['probabilidad'] for d in diagnosticos],
-        'Urgencia': [d['urgencia'] for d in diagnosticos]
-    })
+def create_busqueda_content(termino=None, resultados=None):
+    """Contenido para la funcionalidad de búsqueda"""
     
-    fig = px.bar(data, x='Probabilidad', y='Diagnóstico', 
-                color='Urgencia', orientation='h',
-                labels={'Probabilidad': 'Probabilidad (%)'},
-                color_discrete_map={
-                    'Alta': '#FF5252',
-                    'Media': '#FFA726',
-                    'Baja': '#66BB6A'
-                })
-    fig.update_layout(showlegend=False)
+    # Componente default
+    default_content = html.P("Busca información médica específica en el chat.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
     
-    return dcc.Graph(figure=fig, config={'displayModeBar': False})
+    # Componente específico si hay parámetros
+    busqueda_content = []
+    if termino:
+        busqueda_content.append(html.H6(f"Búsqueda: {termino}", style={'margin-bottom': '10px'}))
+    else:
+        busqueda_content.append(default_content)
+    
+    # Resultados de búsqueda si están disponibles
+    resultados_content = []
+    if resultados:
+        resultados_content.append(html.H6("Resultados encontrados:", style={'margin-bottom': '10px'}))
+        if isinstance(resultados, list):
+            for r in resultados:
+                resultados_content.append(html.Div([
+                    html.A(r.get('titulo', 'Sin título'), href=r.get('enlace', '#'), target="_blank"),
+                    html.P(r.get('descripcion', 'Sin descripción')),
+                    html.Hr()
+                ]))
+        else:
+            resultados_content.append(html.P(resultados))
+    
+    return html.Div([
+        html.H4("🔍 Búsqueda Médica", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+        html.P("Búsqueda de información médica y recursos de salud.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📚 Recursos Médicos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='recursos-medicos', children=busqueda_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📖 Resultados de Búsqueda", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='articulos-estudios', children=resultados_content if resultados_content else [
+                    html.P("Aquí aparecerán artículos y estudios relevantes.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
+    ])
+
+def create_analizar_imagenes_content(image_path=None, resultados=None):
+    """Contenido para la funcionalidad de análisis de imágenes"""
+    
+    # Componente default
+    default_content = html.Div([
+        html.P("Sube una imagen médica en el chat para su análisis.", 
+               style=FUNCTIONAL_VIEW_STYLES['content-text']),
+        dcc.Upload(
+            id='upload-imagen',
+            children=dbc.Button(
+                "📷 Adjuntar imagen",
+                color="primary",
+                className="me-1"
+            ),
+            multiple=False
+        )
+    ])
+    
+    # Componente específico si hay parámetros
+    imagen_content = []
+    if image_path:
+        imagen_content.append(html.H6("Imagen para análisis:", style={'margin-bottom': '10px'}))
+        imagen_content.append(html.Img(src=image_path, style={'max-width': '100%', 'max-height': '300px'}))
+        imagen_content.append(dbc.Button(
+            "🔄 Cambiar imagen",
+            color="secondary",
+            className="me-1",
+            style={'margin-top': '10px'}
+        ))
+    else:
+        imagen_content.append(default_content)
+    
+    # Resultados del análisis si están disponibles
+    analisis_content = []
+    if resultados:
+        analisis_content.append(html.H6("Hallazgos:", style={'margin-bottom': '10px'}))
+        if isinstance(resultados, dict):
+            for key, value in resultados.items():
+                analisis_content.append(html.P(f"{key}: {value}"))
+        else:
+            analisis_content.append(html.P(resultados))
+    
+    return html.Div([
+        html.H4("🖼️ Análisis de Imágenes", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+        html.P("Análisis de imágenes médicas y diagnósticos visuales.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("📸 Imagen Analizada", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='imagen-analizada', children=imagen_content)
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("🔍 Resultados del Análisis", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='resultados-imagen', children=analisis_content if analisis_content else [
+                    html.P("Los resultados del análisis aparecerán aquí.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("⚠️ Limitaciones", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='limitaciones-imagen', children=[
+                    html.P("• El análisis es preliminar", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• Consulta siempre con un radiólogo", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• No reemplaza la evaluación profesional", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
+    ])
+
+def create_centros_cercanos_content(municipio=None, centros=None):
+    """Contenido para la funcionalidad de búsqueda de centros cercanos"""
+    
+    # Mapa de Colombia por defecto
+    mapa_content = html.Iframe(
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d16284026.303741757!2d-83.72287695!3d4.57086835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e15a43aae1594a3%3A0x9a0d9a04eff2a340!2sColombia!5e0!3m2!1ses!2sco!4v1620000000000!5m2!1ses!2sco",
+        width="100%",
+        height="300",
+        style={"border": "0"},
+        allowFullScreen="",
+        loading="lazy"
+    )
+    
+    # Actualizar mapa si se selecciona un municipio
+    if municipio:
+        mapa_content = html.Iframe(
+            src=f"https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q={municipio},Colombia",
+            width="100%",
+            height="300",
+            style={"border": "0"},
+            allowFullScreen="",
+            loading="lazy"
+        )
+    
+    # Selector de municipio
+    municipio_selector = dcc.Dropdown(
+        id='municipio-selector',
+        options=[
+            {'label': 'Bogotá', 'value': 'Bogotá'},
+            {'label': 'Medellín', 'value': 'Medellín'},
+            {'label': 'Cali', 'value': 'Cali'},
+            {'label': 'Barranquilla', 'value': 'Barranquilla'},
+            {'label': 'Cartagena', 'value': 'Cartagena'},
+            {'label': 'Otra ciudad', 'value': 'other'}
+        ],
+        placeholder="Selecciona tu municipio",
+        value=municipio if municipio else None
+    )
+    
+    # Lista de centros si está disponible
+    centros_content = []
+    if centros:
+        centros_content.append(html.H6("Centros médicos cercanos:", style={'margin-bottom': '10px'}))
+        if isinstance(centros, list):
+            for centro in centros:
+                centros_content.append(html.Div([
+                    html.H5(centro.get('nombre', 'Centro médico')),
+                    html.P(f"📍 {centro.get('direccion', 'Dirección no disponible')}"),
+                    html.P(f"📞 {centro.get('telefono', 'Teléfono no disponible')}"),
+                    html.P(f"⏰ {centro.get('horario', 'Horario no disponible')}"),
+                    html.P(f"📌 Distancia: {centro.get('distancia', '?')} km"),
+                    html.Hr()
+                ]))
+        else:
+            centros_content.append(html.P(centros))
+    
+    return html.Div([
+        html.H4("🏥 Centros Médicos Cercanos", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+        html.P("Encuentra los centros de atención más cercanos a tu ubicación.", style=FUNCTIONAL_VIEW_STYLES['content-text']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("🗺️ Ubicación", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                municipio_selector,
+                html.Div(mapa_content, style={'margin-top': '15px'})
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("🏥 Centros de Salud", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div(id='lista-centros', children=centros_content if centros_content else [
+                    html.P("Selecciona un municipio para ver los centros médicos disponibles.", 
+                           style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card']),
+        
+        dbc.Card([
+            dbc.CardBody([
+                html.H6("ℹ️ Información Adicional", style=FUNCTIONAL_VIEW_STYLES['content-card-header']),
+                html.Div([
+                    html.P("• Los datos se actualizan periódicamente", style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• Verifica horarios antes de visitar", style=FUNCTIONAL_VIEW_STYLES['content-text']),
+                    html.P("• Algunos centros requieren cita previa", style=FUNCTIONAL_VIEW_STYLES['content-text'])
+                ])
+            ])
+        ], style=FUNCTIONAL_VIEW_STYLES['content-card'])
+    ])
