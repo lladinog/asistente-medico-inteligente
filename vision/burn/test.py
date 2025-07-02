@@ -1,3 +1,4 @@
 from inference import workflow
+import os
 
-print(workflow("/workspaces/asistente-medico-inteligente/vision/Burn/test.jpg"))
+print(workflow(os.path.join(os.path.dirname(__file__), "test.jpg")))

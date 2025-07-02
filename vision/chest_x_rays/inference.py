@@ -4,10 +4,11 @@ from keras.applications.mobilenet import MobileNet
 from keras.layers import GlobalAveragePooling2D, Dense, Dropout
 from keras.models import Sequential
 from keras.preprocessing.image import load_img, img_to_array
+import os
 
 IMG_SIZE = (128, 128)
-WEIGHTS_PATH = '/workspaces/asistente-medico-inteligente/vision/chest_x_rays/model.hdf5'
-CSV_PATH = '/workspaces/asistente-medico-inteligente/vision/chest_x_rays/Data.csv'
+WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), 'model.hdf5')
+CSV_PATH = os.path.join(os.path.dirname(__file__), 'Data.csv')
 MIN_CASES = 1000
 
 # === 1. Reconstruir lista de clases ===

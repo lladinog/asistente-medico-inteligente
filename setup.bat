@@ -21,6 +21,37 @@ if errorlevel 1 (
 for /f "tokens=2 delims= " %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
 echo ✅ Python encontrado: %PYTHON_VERSION%
 
+:: Verificar versión mínima de Python (ej. 3.10 <= x <= 3.11)
+setlocal enabledelayedexpansion
+for /f "tokens=1-3 delims=." %%a in ("%PYTHON_VERSION%") do (
+    set /a MAJOR=%%a
+    set /a MINOR=%%b
+)
+
+if !MAJOR! LSS 3 (
+    echo ❌ ERROR: Se requiere Python 3.10 o superior
+    echo ⚠️  Por favor instala Python 3.10 o 3.11, se le sugiere esta version: https://www.python.org/downloads/release/python-3119/
+    pause
+    exit /b 1
+)
+
+if !MAJOR! EQU 3 (
+    if !MINOR! LSS 10 (
+        echo ❌ ERROR: Se requiere Python 3.10 o superior
+        echo ⚠️  Por favor instala Python 3.10 o 3.11, se le sugiere esta version: https://www.python.org/downloads/release/python-3119/
+        pause
+        exit /b 1
+    )
+
+    if !MINOR! GTR 11 (
+        echo ❌ ERROR: Python 3.13 no es compatible con TensorFlow ni otras librerías importantes
+        echo ⚠️  Por favor instala Python 3.10 o 3.11, se le sugiere esta version: https://www.python.org/downloads/release/python-3119/
+        pause
+        exit /b 1
+    )
+)
+endlocal
+
 :: Verificar si pip está disponible
 echo 🔍 Verificando pip...
 pip --version >nul 2>&1
@@ -133,6 +164,6 @@ echo    https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/blob/main/llama-2-7
 echo.
 echo 👉 Guarda el archivo en: C:/Users/tu_usuario/llama3/
 echo.
-echo ⚠️  RECUERDA: Edita config.py o .env con tu API key de OpenAI
+echo ⚠️  RECUERDA: Edita config.py o .env
 echo.
 pause 

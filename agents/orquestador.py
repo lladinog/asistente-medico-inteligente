@@ -403,7 +403,6 @@ class Orquestador:
     
     def _notificar_error(self, mensaje: str):
         """Notifica sobre errores de procesamiento."""
-        """Notifica sobre errores de procesamiento."""
         print(f"[ERROR] {mensaje}")
     
     def _generar_session_id(self) -> str:
@@ -434,7 +433,6 @@ class Orquestador:
         
         # Clasificar automáticamente como interpretación de exámenes
         funcionalidad = FuncionalidadMedica.INTERPRETACION_EXAMENES.key
-        self._cambiar_interfaz(funcionalidad)
         print(f"[ORQUESTADOR] Procesando PDF como: {funcionalidad}")
         
         agente = self.agentes.get(funcionalidad)

@@ -1,8 +1,10 @@
 from ultralytics import YOLO
+import os
 
 
 def load_yolo_model():
-    model = YOLO('/workspaces/asistente-medico-inteligente/vision/Brain Tumor/model.pt')
+    model_path = os.path.join(os.path.dirname(__file__), 'model.pt')
+    model = YOLO(model_path)
     return model
 
 def workflow(image_path):
