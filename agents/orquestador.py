@@ -316,6 +316,18 @@ class Orquestador:
             
         return False
     
+    def is_image(self, mensaje: str) -> bool:
+        """
+        Verifica si el mensaje contiene una referencia a una imagen.
+        
+        Args:
+            mensaje: Mensaje del usuario a verificar
+            
+        Returns:
+            bool: True si es una imagen
+        """
+        return bool(re.search(r'\.(jpg|jpeg|png|gif|bmp|tiff|webp)$', mensaje.lower()))
+    
     def procesar_mensaje(self, session_id: Optional[str], mensaje_usuario: str, archivo_path: Optional[str] = None) -> Dict:
         """
         Procesa un mensaje del usuario con detección automática de archivos PDF.
@@ -333,6 +345,10 @@ class Orquestador:
         if archivo_path and self._es_archivo_pdf(archivo_path):
             print(f"[ORQUESTADOR] Archivo PDF detectado: {archivo_path}")
             return self.procesar_archivo_medico(session_id, archivo_path, mensaje_usuario)
+        
+        if archivo_path and self.is_image(archivo_path):
+            print(f"[ORQUESTADOR] Imagen médica detectada: {archivo_path}")
+            return self.procesar_imagen_medica(session_id, archivo_path, mensaje_usuario)
         
         # Verificar si el mensaje hace referencia a un PDF
         if self._es_archivo_pdf(mensaje_usuario):
@@ -489,6 +505,72 @@ class Orquestador:
                 },
                 "metadata": {"error": error_msg}
             }
+    def procesar_imagen_medica(self, session_id: Optional[str], imagen_path: str, mensaje : str) -> Dict:
+        """
+        Procesa una imagen médica enviada desde el frontend.
+        """
+        if not session_id:
+            session_id = self._generar_session_id()
+
+        # Validar que es una imagen
+        if not self.is_image(imagen_path):
+            return {
+                "session_id": session_id,
+                "funcionalidad": "error",
+                "respuesta": {
+                    "output": "❌ Formato de archivo no soportado. Solo se permiten imágenes.",
+                    "metadata": {"tipo": "formato_no_soportado"}
+                },
+                "metadata": {"error": "Formato no soportado"}
+            }
+
+        # Clasificar automáticamente como análisis de imágenes
+        funcionalidad = FuncionalidadMedica.ANALISIS_IMAGENES.key
+        print(f"[ORQUESTADOR] Procesando imagen como: {funcionalidad}")
+
+        agente = self.agentes.get(funcionalidad)
+        if not agente:
+            return {
+                "session_id": session_id,
+                "funcionalidad": funcionalidad,
+                "respuesta": {
+                    "output": "❌ Agente de análisis de imágenes no disponible",
+                    "metadata": {"tipo": "error_agente"}
+                },
+                "metadata": {"error": "Agente no registrado"}
+            }
+
+        try:
+            # Iniciar interacción si el método existe
+            metadata = agente.iniciar_interaccion(session_id, imagen_path)
+
+            # Procesar la imagen médica
+            respuesta = agente.preguntar(
+                session_id=session_id,
+                pregunta=f"{mensaje}; Además adjunto una imagen, te pasare los resultados del análisis: {imagen_path}",
+                metadata=metadata
+            )
+
+            return {
+                "session_id": session_id,
+                "funcionalidad": funcionalidad,
+                "respuesta": respuesta,
+                "metadata": metadata if metadata else {}
+            }
+
+        except Exception as e:
+            error_msg = f"Error procesando imagen médica: {str(e)}"
+            self._notificar_error(error_msg)
+
+            return {
+                "session_id": session_id,
+                "funcionalidad": funcionalidad,
+                "respuesta": {
+                    "output": f"❌ {error_msg}",
+                    "metadata": {"tipo": "error_procesamiento"}
+                },
+                "metadata": {"error": error_msg}
+            }       
     
     def continuar_conversacion_examenes(self, session_id: str, pregunta: str) -> Dict:
         """
