@@ -1,18 +1,23 @@
 """
 Aplicación principal completamente modular
-Utiliza componentes, estilos y callbacks separados
+Utiliza componentes, estilos y callbacks separados para todos los agentes
 """
 
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.environ["CLICOLOR"] = "0"
 
 import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from agents.orquestador import Orquestador, FuncionalidadMedica
 from agents.diagnostico import AgenteDiagnostico
+from agents.analizarImagenes import AgenteAnalisisImagenes
+from agents.interpretacionExamenes import AgenteInterpretacionExamenes
 from agents.explicacion import AgenteExplicacionMedica
+from agents.busqueda import AgenteBusquedaCentros
+from agents.contactoMedico import AgenteContactoMedico
 
 # Importar componentes
 from components.sidebar import create_sidebar_component
@@ -30,34 +35,42 @@ from callbacks.navigation import register_navigation_callbacks
 def create_app():
     """Crea y configura la aplicación Dash"""
     
-    # Configuración inicial
-    config = {
-        "nombre_app": "Health IA",
-        "estilo": dbc.themes.DARKLY
-    }
+    # Inicializar orquestador sin frontend_callback
+    orquestador = Orquestador()
 
-    model_config = {
-        "model_path": "modelos/llama-medical.bin",
-        "n_ctx": 2048,
-        "n_threads": 8
-    }
-
-    # Inicializar orquestador
-    orquestador = Orquestador(config, model_config)
-
-    # Registrar agentes
+    # Registrar todos los agentes disponibles
     orquestador.registrar_agente(
         FuncionalidadMedica.DIAGNOSTICO,
         AgenteDiagnostico()
     )
     orquestador.registrar_agente(
-        FuncionalidadMedica.EXPLICACION_MEDICA,
+        FuncionalidadMedica.ANALISIS_IMAGENES,
+        AgenteAnalisisImagenes()
+    )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.INTERPRETACION_EXAMENES,
+        AgenteInterpretacionExamenes()
+    )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.EXPLICACION,
         AgenteExplicacionMedica()
+    )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.BUSCADOR_CENTROS,
+        AgenteBusquedaCentros()
+    )
+    orquestador.registrar_agente(
+        FuncionalidadMedica.CONTACTO_MEDICO,
+        AgenteContactoMedico()
     )
 
     # Crear aplicación Dash
-    app = dash.Dash(__name__, external_stylesheets=[config["estilo"]])
-    app.title = config["nombre_app"]
+    external_stylesheets = [
+        dbc.themes.DARKLY,
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    ]
+    app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+    app.title = "Health IA"
 
     # Layout principal con componentes
     app.layout = html.Div(style=MAIN_STYLES['main-container'], children=[
@@ -66,6 +79,7 @@ def create_app():
         dcc.Store(id='current-functionality', data='home'),
         dcc.Store(id='sidebar-collapsed', data=False),
         dcc.Store(id='conversations-store', data=[]),
+        dcc.Store(id='sidebar-editing-title', data=None),
         dcc.Upload(id='upload-document', children=None, multiple=True),
         
         # Botón flotante para abrir sidebar (visible cuando está cerrado)
