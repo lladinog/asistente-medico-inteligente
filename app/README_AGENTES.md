@@ -1,4 +1,4 @@
-# Páginas de Agentes - Asistente Médico Rural
+# Páginas de Agentes - Health IA
 
 ## 🎯 Elemento Functional View
 

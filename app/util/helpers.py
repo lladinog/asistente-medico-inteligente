@@ -67,7 +67,7 @@ def generar_mensaje_bienvenida():
         ]
     )
     return (
-        f"¡Hola! Soy tu asistente médico inteligente. Estas son mis funcionalidades:\n\n"
+        f"¡Hola! Soy Health IA, tu asistente de salud virtual. Estas son mis funcionalidades:\n\n"
         f"{menu}\n\n"
-        "Puedes escribir el número o el nombre de la funcionalidad que deseas usar."
-    ) 
+        "Puedes hacerme una pregunta, escribir el número o el nombre de la funcionalidad que deseas usar y yo estaré encantado de ayudarte ❤️."
+    )

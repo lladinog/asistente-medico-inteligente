@@ -1,6 +1,6 @@
 # 🚀 Scripts de Setup Automático
 
-Este directorio contiene scripts para configurar automáticamente el **Asistente Médico Inteligente** en diferentes sistemas operativos.
+Este directorio contiene scripts para configurar automáticamente **Health IA** en diferentes sistemas operativos.
 
 ## 📋 Scripts Disponibles
 

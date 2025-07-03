@@ -11,7 +11,7 @@ import json
 from modelos.diagnostico import FreeMedicalDiagnosisSystem
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.title = "Asistente Médico Rural"
+app.title = "Health IA"
 
 # Datos mockeados para centros médicos
 CENTROS_MEDICOS = {
@@ -67,8 +67,7 @@ def create_header():
             dbc.Row([
                 dbc.Col([
                     html.Div([
-                        html.I(className="fas fa-heartbeat", style={'fontSize': '2rem', 'color': COLORS['accent'], 'marginRight': '10px'}),
-                        html.H3("Asistente Médico Rural", className="mb-0", style={'color': COLORS['primary'], 'fontWeight': 'bold'})
+                        html.H3("Health IA", className="mb-0", style={'color': COLORS['primary'], 'fontWeight': 'bold'})
                     ], style={'display': 'flex', 'alignItems': 'center'})
                 ], width=8),
                 dbc.Col([
@@ -1267,7 +1266,7 @@ def handle_chat(n_clicks, user_input, chat_history):
     
     bot_message = html.Div([
         html.Div([
-            html.Span("Asistente Médico", style={'fontWeight': 'bold', 'color': COLORS['success']}),
+                            html.Span("Health IA", style={'fontWeight': 'bold', 'color': COLORS['success']}),
             dcc.Markdown(diagnosis_response, style={
                 'backgroundColor': COLORS['white'],
                 'padding': '10px',

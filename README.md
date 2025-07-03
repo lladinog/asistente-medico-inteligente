@@ -1,10 +1,10 @@
-# 🤖 Asistente Médico Inteligente
+# 🤖 Health IA
 
 Plataforma inteligente para diagnóstico preliminar y apoyo médico en zonas rurales, desarrollada en la Hackatón Deeppunk 2025.
 
 ## 📋 Descripción
 
-El Asistente Médico Inteligente es una aplicación web que combina procesamiento de lenguaje natural (PLN) y visión por computadora para proporcionar análisis médico asistido. La plataforma está diseñada para ayudar a profesionales de la salud en zonas rurales o con recursos limitados.
+Health IA es una aplicación web que combina procesamiento de lenguaje natural (PLN) y visión por computadora para proporcionar análisis médico asistido. La plataforma está diseñada para ayudar a profesionales de la salud en zonas rurales o con recursos limitados.
 
 ### 🎯 Características Principales
 

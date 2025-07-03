@@ -9,10 +9,12 @@ CHAT_STYLES = {
         'flex': 1,
         'display': 'flex',
         'flexDirection': 'column',
-        'height': '100vh',
+        'height': '100%',
+        'width': '100%',
         'transition': TRANSITIONS['default'],
         'position': 'relative',
-        'minWidth': 0
+        'minWidth': 0,
+        'minHeight': 0
     },
     'chat-header': {
         'backgroundColor': THEME_COLORS['surface'],
@@ -88,7 +90,8 @@ CHAT_STYLES = {
         'display': 'flex',
         'alignItems': 'center',
         'justifyContent': 'center',
-        'transition': TRANSITIONS['fast']
+        'transition': TRANSITIONS['fast'],
+        'zIndex': 10
     },
     'send-button:hover': {
         'backgroundColor': THEME_COLORS['secondary']

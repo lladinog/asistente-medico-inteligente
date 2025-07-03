@@ -34,7 +34,7 @@ trap cleanup SIGINT SIGTERM
 
 echo
 echo "========================================"
-print_message "🤖 ASISTENTE MÉDICO INTELIGENTE"
+print_message "🤖 HEALTH IA"
 echo "========================================"
 
 # Detectar sistema operativo
@@ -165,7 +165,7 @@ CPU_CORES=$(getconf _NPROCESSORS_ONLN)
 if [ ! -f ".env" ]; then
     print_info "📝 Creando archivo .env..."
     cat > .env << EOF
-# Configuración del Asistente Médico Inteligente
+# Configuración de Health IA
 
 # Frontend
 DEBUG=True
@@ -202,7 +202,7 @@ echo
 # Crear script de ejecución rápida
 cat > run_app.sh << 'EOF'
 #!/bin/bash
-echo "🤖 Iniciando Asistente Médico Inteligente..."
+echo "🤖 Iniciando Health IA..."
 source venv/bin/activate
 python app/app_modular.py
 EOF

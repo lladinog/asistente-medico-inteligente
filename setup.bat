@@ -2,7 +2,7 @@
 chcp 65001 >nul
 echo.
 echo ========================================
-echo 🤖 ASISTENTE MÉDICO INTELIGENTE
+echo 🤖 HEALTH IA
 echo ========================================
 echo Setup automático para Windows
 echo.

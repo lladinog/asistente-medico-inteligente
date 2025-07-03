@@ -1,4 +1,4 @@
-# Estructura Modular - Asistente Médico Rural
+# Estructura Modular - Health IA
 
 ## 🏗️ Arquitectura Modular
 

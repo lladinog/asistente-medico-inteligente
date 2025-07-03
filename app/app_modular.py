@@ -6,6 +6,7 @@ Utiliza componentes, estilos y callbacks separados para todos los agentes
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.environ["CLICOLOR"] = "0"
 
 import dash
 from dash import dcc, html
@@ -68,8 +69,8 @@ def create_app():
         dbc.themes.DARKLY,
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     ]
-    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-    app.title = "Asistente Médico"
+    app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+    app.title = "Health IA"
 
     # Layout principal con componentes
     app.layout = html.Div(style=MAIN_STYLES['main-container'], children=[

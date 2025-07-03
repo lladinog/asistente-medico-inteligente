@@ -32,7 +32,7 @@ def create_app():
     
     # Configuración inicial
     config = {
-        "nombre_app": "Asistente Médico Rural",
+        "nombre_app": "Health IA",
         "estilo": dbc.themes.DARKLY
     }
 

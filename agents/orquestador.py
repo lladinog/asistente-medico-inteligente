@@ -15,7 +15,7 @@ class Orquestador:
         """
         # Configuración inicial
         config = {
-            "nombre_app": "Asistente Médico Rural",
+            "nombre_app": "Health IA",
             "tipo": "Orquestador",
         }
 

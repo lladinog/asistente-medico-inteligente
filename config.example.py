@@ -1,9 +1,9 @@
-# Configuración de ejemplo para el Asistente Médico Inteligente
+# Configuración de ejemplo para Health IA
 # Copia este archivo como config.py y ajusta los valores según tus necesidades
 import os
 
 class Config:
-    """Configuración principal del Asistente Médico Inteligente"""
+    """Configuración principal de Health IA"""
 
     # -------------------------------
     # Configuración general de la app

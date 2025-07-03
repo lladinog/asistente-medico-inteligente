@@ -13,6 +13,8 @@ from components.functional_view import (
     create_busqueda_content,
     create_analizar_imagenes_content
 )
+from components.chat import create_chat_component
+from components.functional_view import create_functional_view_component
 
 def register_navigation_callbacks(app):
     """Registra todos los callbacks relacionados con la navegación"""
@@ -89,4 +91,18 @@ def register_navigation_callbacks(app):
             'analizar-imagenes-button': '/analizar-imagenes'
         }
         
-        return route_mapping.get(button_id, '/') 
+        return route_mapping.get(button_id, '/')
+
+    @app.callback(
+        Output('main-content-router', 'children'),
+        Input('url', 'pathname')
+    )
+    def route_main_content(pathname):
+        if pathname == '/':
+            return create_chat_component()
+        elif pathname == '/chat':
+            return create_chat_component()
+        elif pathname == '/vista-funcional':
+            return create_functional_view_component()
+        else:
+            return create_chat_component() 
